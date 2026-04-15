@@ -1,0 +1,320 @@
+/* ===== Real Analysis Notes — Shared Stylesheet ===== */
+
+/* ---------- Reset & Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --font-body: "Georgia", "Times New Roman", serif;
+  --font-heading: "Helvetica Neue", "Arial", sans-serif;
+  --font-mono: "Fira Code", "Consolas", monospace;
+
+  /* Light mode (default) */
+  --bg: #fdfdfd;
+  --bg-block: #f4f6f8;
+  --text: #1a1a1a;
+  --text-muted: #555;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --border: #d1d5db;
+
+  --def-border: #2563eb;
+  --def-bg: #eff6ff;
+  --thm-border: #16a34a;
+  --thm-bg: #f0fdf4;
+  --proof-border: #6b7280;
+  --proof-bg: #f9fafb;
+  --example-border: #d97706;
+  --example-bg: #fffbeb;
+  --exercise-border: #9333ea;
+  --exercise-bg: #faf5ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --bg-block: #1e1e1e;
+    --text: #e4e4e7;
+    --text-muted: #a1a1aa;
+    --accent: #60a5fa;
+    --accent-light: #1e3a5f;
+    --border: #3f3f46;
+
+    --def-border: #60a5fa;
+    --def-bg: #1e293b;
+    --thm-border: #4ade80;
+    --thm-bg: #14332a;
+    --proof-border: #71717a;
+    --proof-bg: #1c1c1e;
+    --example-border: #fbbf24;
+    --example-bg: #292211;
+    --exercise-border: #a78bfa;
+    --exercise-bg: #1e1533;
+  }
+}
+
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* ---------- Typography ---------- */
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  line-height: 1.3;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-top: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+}
+
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.2rem; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+ul, ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.35rem;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--bg-block);
+  padding: 0.15em 0.35em;
+  border-radius: 3px;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+/* ---------- Metadata Block ---------- */
+
+.metadata {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.metadata span + span::before {
+  content: " · ";
+}
+
+/* ---------- Styled Content Blocks ---------- */
+
+.definition,
+.theorem,
+.proof,
+.example,
+.exercise {
+  border-left: 4px solid;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.definition {
+  border-color: var(--def-border);
+  background: var(--def-bg);
+}
+
+.theorem {
+  border-color: var(--thm-border);
+  background: var(--thm-bg);
+}
+
+.proof {
+  border-color: var(--proof-border);
+  background: var(--proof-bg);
+}
+
+.example {
+  border-color: var(--example-border);
+  background: var(--example-bg);
+}
+
+.exercise {
+  border-color: var(--exercise-border);
+  background: var(--exercise-bg);
+}
+
+.definition .block-label,
+.theorem .block-label,
+.proof .block-label,
+.example .block-label,
+.exercise .block-label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.proof::after {
+  content: "∎";
+  display: block;
+  text-align: right;
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+}
+
+/* ---------- Figures / Visualizations ---------- */
+
+figure {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+figure canvas,
+figure svg {
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+figcaption {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+/* ---------- Details / Summary (Exercise Solutions) ---------- */
+
+details {
+  margin-top: 0.75rem;
+}
+
+summary {
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  color: var(--accent);
+  user-select: none;
+}
+
+summary:hover {
+  text-decoration: underline;
+}
+
+details[open] > summary {
+  margin-bottom: 0.5rem;
+}
+
+/* ---------- Controls (sliders, buttons for visualizations) ---------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0.75rem 0;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.controls input[type="range"] {
+  width: 10rem;
+}
+
+/* ---------- Table of Contents (index.html) ---------- */
+
+.toc-group h2 {
+  font-size: 1.25rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.toc-group ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.toc-group li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-group li:last-child {
+  border-bottom: none;
+}
+
+.toc-group a {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+/* ---------- KaTeX Overrides ---------- */
+
+.katex-display {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 600px) {
+  html { font-size: 16px; }
+  body { padding: 1rem 1rem 3rem; }
+  .controls input[type="range"] { width: 7rem; }
+}

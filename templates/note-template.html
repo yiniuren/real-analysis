@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONCEPT NAME — Real Analysis Notes</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\\\(', right: '\\\\)', display: false}
+      ]
+    });"></script>
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+
+  <!-- ====== 1. Title & Metadata ====== -->
+  <h1>CONCEPT NAME</h1>
+  <div class="metadata">
+    <span>Topic: TOPIC AREA</span>
+    <span>Date: YYYY-MM-DD</span>
+    <span>Prerequisites: <a href="PREREQUISITE.html">PREREQUISITE NAME</a></span>
+  </div>
+
+  <!-- ====== 2. Motivation / Intuition ====== -->
+  <h2>Motivation</h2>
+  <p>
+    TODO: Explain in plain language why this concept matters and what problem it
+    solves. Build intuition before introducing formal notation.
+  </p>
+
+  <!-- ====== 3. Formal Definitions ====== -->
+  <h2>Definitions</h2>
+
+  <div class="definition">
+    <span class="block-label">Definition 1 — NAME</span>
+    <p>
+      TODO: State the definition precisely. Use LaTeX for math:
+    </p>
+    <p>
+      $$\forall \varepsilon > 0,\; \exists\, \delta > 0 \text{ such that } \ldots$$
+    </p>
+  </div>
+
+  <!-- ====== 4. Key Theorems & Proofs ====== -->
+  <h2>Theorems</h2>
+
+  <div class="theorem">
+    <span class="block-label">Theorem 1 — NAME</span>
+    <p>
+      TODO: State the theorem.
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p>
+      TODO: Write the proof (or a proof sketch with a reference to the full proof).
+    </p>
+  </div>
+
+  <!-- ====== 5. Visualizations ====== -->
+  <h2>Visualizations</h2>
+
+  <figure>
+    <canvas id="viz1" width="600" height="360"></canvas>
+    <div class="controls">
+      <label>Parameter: <input type="range" id="param1" min="0" max="100" value="50"></label>
+    </div>
+    <figcaption>TODO: Describe what this visualization shows.</figcaption>
+  </figure>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById("viz1");
+      const ctx = canvas.getContext("2d");
+      const slider = document.getElementById("param1");
+
+      function draw() {
+        const val = Number(slider.value);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // TODO: implement visualization drawing logic
+        ctx.fillStyle = "#888";
+        ctx.font = "16px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Visualization placeholder (param = " + val + ")", canvas.width / 2, canvas.height / 2);
+      }
+
+      slider.addEventListener("input", draw);
+      draw();
+    })();
+  </script>
+
+  <!-- ====== 6. Worked Examples ====== -->
+  <h2>Examples</h2>
+
+  <div class="example">
+    <span class="block-label">Example 1</span>
+    <p>
+      TODO: Walk through a concrete calculation or construction that applies
+      the definitions and theorems above.
+    </p>
+  </div>
+
+  <!-- ====== 7. Exercises ====== -->
+  <h2>Exercises</h2>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 1</span>
+    <p>
+      TODO: Pose a practice problem.
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>TODO: Provide the solution.</p>
+    </details>
+  </div>
+
+  <!-- ====== 8. References ====== -->
+  <h2>References</h2>
+  <ul>
+    <li>TODO: Textbook, chapter/section.</li>
+    <li>TODO: URL or paper reference.</li>
+  </ul>
+
+</body>
+</html>
