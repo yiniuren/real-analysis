@@ -25,8 +25,6 @@
   <h1>Continuous Mappings</h1>
   <div class="metadata">
     <span>Topic: Limits and Continuity</span>
-    <span>Date: 2026-04-15</span>
-    <span>Reference: MTH 311 Worksheet 8</span>
   </div>
 
   <!-- ====== 2. Motivation / Intuition ====== -->
@@ -99,188 +97,7 @@
     </p>
   </div>
 
-  <!-- ====== 4. Key Theorems & Proofs ====== -->
-  <h2>Theorems</h2>
-
-  <!-- Theorem 1: Equivalent characterizations -->
-  <div class="theorem">
-    <span class="block-label">Theorem 1 — Equivalent Characterizations of Continuity</span>
-    <p>Let \(f: X \to Y\) be a mapping between metric spaces. The following are equivalent:</p>
-    <ol>
-      <li>\(f\) is continuous (Definition 1).</li>
-      <li>The preimage of every open set in \(Y\) is open in \(X\).</li>
-      <li>The preimage of every closed set in \(Y\) is closed in \(X\).</li>
-      <li>For every sequence \((a_n) \subset X\) with \(a_n \to a\), we have \(f(a_n) \to f(a)\).</li>
-    </ol>
-  </div>
-
-  <div class="proof">
-    <span class="block-label">Proof sketch — (1) ⇒ (2)</span>
-    <p class="proof-goal">Goal: show that if \(f\) satisfies the \(\varepsilon\)-\(\delta\) definition, then \(f^{-1}(U)\) is open for every open \(U \subset Y\).</p>
-    <ul>
-      <li>
-        Let \(U \subset Y\) be open and pick any \(x \in f^{-1}(U)\).
-        <br><em>— We need to find a ball around \(x\) that stays inside \(f^{-1}(U)\).</em>
-      </li>
-      <li>
-        Since \(f(x) \in U\) and \(U\) is open, there exists \(\varepsilon > 0\) with \(B_\varepsilon(f(x)) \subset U\).
-        <br><em>— Openness of \(U\) gives us a target radius in the output space.</em>
-      </li>
-      <li>
-        By continuity (Definition 1) applied at \(x\) with this \(\varepsilon\), obtain \(\delta > 0\) such that \(d_X(x,y) < \delta \implies d_Y(f(x),f(y)) < \varepsilon\).
-        <br><em>— This \(\delta\) converts the output guarantee into an input radius.</em>
-      </li>
-      <li>
-        Then \(B_\delta(x) \subset f^{-1}(U)\), so \(f^{-1}(U)\) is open.
-        <br><em>— Every point of \(f^{-1}(U)\) is an interior point, which is exactly the definition of an open set.</em>
-      </li>
-    </ul>
-  </div>
-
-  <div class="proof">
-    <span class="block-label">Proof sketch — (2) ⇒ (1)</span>
-    <p class="proof-goal">Goal: show that the open-preimage property implies the \(\varepsilon\)-\(\delta\) condition at every point.</p>
-    <ul>
-      <li>
-        Fix \(x \in X\) and \(\varepsilon > 0\). Consider the open ball \(U = B_\varepsilon(f(x)) \subset Y\).
-        <br><em>— We construct an explicit open set whose preimage we can exploit.</em>
-      </li>
-      <li>
-        By assumption, \(f^{-1}(U)\) is open in \(X\), and \(x \in f^{-1}(U)\).
-        <br><em>— Openness of the preimage guarantees a ball around \(x\) inside it.</em>
-      </li>
-      <li>
-        So there exists \(\delta > 0\) with \(B_\delta(x) \subset f^{-1}(U)\), meaning \(d_X(x,y) < \delta \implies f(y) \in U \implies d_Y(f(x),f(y)) < \varepsilon\).
-        <br><em>— This is exactly the \(\varepsilon\)-\(\delta\) condition at \(x\).</em>
-      </li>
-    </ul>
-  </div>
-
-  <div class="proof">
-    <span class="block-label">Proof sketch — (1) ⇒ (4) (sequential continuity)</span>
-    <p class="proof-goal">Goal: show that if \(a_n \to a\), then \(f(a_n) \to f(a)\).</p>
-    <ul>
-      <li>
-        Fix \(\varepsilon > 0\). By continuity at \(a\), obtain \(\delta > 0\) such that \(d_X(a, y) < \delta \implies d_Y(f(a), f(y)) < \varepsilon\).
-        <br><em>— We convert the continuity guarantee at \(a\) into a usable \(\delta\).</em>
-      </li>
-      <li>
-        Since \(a_n \to a\), there exists \(N\) such that \(d_X(a_n, a) < \delta\) for all \(n \geq N\).
-        <br><em>— Convergence of the sequence lets us enter the \(\delta\)-ball eventually.</em>
-      </li>
-      <li>
-        For all \(n \geq N\), \(d_Y(f(a_n), f(a)) < \varepsilon\). Since \(\varepsilon\) was arbitrary, \(f(a_n) \to f(a)\).
-        <br><em>— Combining the two bounds gives the sequential convergence we wanted.</em>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Theorem 2: Continuous image of compact is compact -->
-  <div class="theorem">
-    <span class="block-label">Theorem 2 — Continuous Image of a Compact Set is Compact</span>
-    <p>
-      Let \(f: X \to Y\) be continuous. If \(K \subset X\) is compact, then \(f(K) \subset Y\) is compact.
-    </p>
-  </div>
-
-  <div class="proof">
-    <span class="block-label">Proof</span>
-    <p class="proof-goal">Goal: given an arbitrary open cover of \(f(K)\), extract a finite subcover.</p>
-    <ul>
-      <li>
-        Let \(\{V_\alpha\}\) be an open cover of \(f(K)\).
-        <br><em>— We start with any open cover of the image and need to reduce it to finitely many sets.</em>
-      </li>
-      <li>
-        Since \(f\) is continuous, each \(f^{-1}(V_\alpha)\) is open in \(X\) (by Theorem 1, characterization (2)).
-        <br><em>— Pull the cover back to the domain, where we can use compactness of \(K\).</em>
-      </li>
-      <li>
-        The collection \(\{f^{-1}(V_\alpha)\}\) covers \(K\), because every \(x \in K\) has \(f(x) \in V_\alpha\) for some \(\alpha\).
-        <br><em>— The preimages form an open cover of the compact set \(K\).</em>
-      </li>
-      <li>
-        By compactness of \(K\), extract a finite subcover: \(K \subset f^{-1}(V_{\alpha_1}) \cup \cdots \cup f^{-1}(V_{\alpha_n})\).
-        <br><em>— This is the key step: compactness turns an infinite cover into a finite one.</em>
-      </li>
-      <li>
-        Applying \(f\), we get \(f(K) \subset V_{\alpha_1} \cup \cdots \cup V_{\alpha_n}\).
-        <br><em>— Push the finite subcover forward to get a finite subcover of \(f(K)\). Done.</em>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Corollary: Extreme Value Theorem -->
-  <div class="theorem">
-    <span class="block-label">Corollary (of Theorem 2) — Extreme Value Theorem</span>
-    <p>
-      Let \(f: X \to \mathbb{R}\) be continuous (where \(\mathbb{R}\) has the Euclidean metric)
-      and let \(K \subset X\) be compact. Then \(f\) attains a maximum and a minimum value on \(K\).
-    </p>
-  </div>
-
-  <div class="proof">
-    <span class="block-label">Proof</span>
-    <p class="proof-goal">Goal: show \(f(K)\) contains its supremum and infimum.</p>
-    <ul>
-      <li>
-        By Theorem 2, \(f(K)\) is a compact subset of \(\mathbb{R}\).
-        <br><em>— Continuity preserves compactness, so the image is compact in \(\mathbb{R}\).</em>
-      </li>
-      <li>
-        A compact subset of \(\mathbb{R}\) is closed and bounded (Heine–Borel).
-        <br><em>— Boundedness guarantees that \(\sup f(K)\) and \(\inf f(K)\) are finite real numbers.</em>
-      </li>
-      <li>
-        Since \(f(K)\) is closed, it contains all its limit points — in particular \(\sup f(K) \in f(K)\) and \(\inf f(K) \in f(K)\).
-        <br><em>— Closedness forces the extreme values to actually be achieved, not just approached.</em>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Theorem 3: Continuous on compact ⇒ uniformly continuous -->
-  <div class="theorem">
-    <span class="block-label">Theorem 3 — Continuous on Compact Implies Uniformly Continuous</span>
-    <p>
-      Let \(f: X \to Y\) be continuous and let \(K \subset X\) be compact.
-      Then \(f\) is uniformly continuous on \(K\).
-    </p>
-  </div>
-
-  <div class="proof">
-    <span class="block-label">Proof</span>
-    <p class="proof-goal">Goal: find a single \(\delta\) that works for all points in \(K\) simultaneously.</p>
-    <ul>
-      <li>
-        Fix \(\varepsilon > 0\). For each \(x \in K\), continuity gives \(\delta_x > 0\) with
-        \(d_X(x, y) < \delta_x \implies d_Y(f(x), f(y)) < \varepsilon / 2\).
-        <br><em>— Each point has its own local \(\delta_x\); we need to unify them.</em>
-      </li>
-      <li>
-        The open balls \(\{B_{\delta_x / 2}(x)\}_{x \in K}\) form an open cover of \(K\).
-        <br><em>— We use half-radius balls so the triangle inequality will work later.</em>
-      </li>
-      <li>
-        By compactness, extract a finite subcover: \(K \subset B_{\delta_{x_1}/2}(x_1) \cup \cdots \cup B_{\delta_{x_n}/2}(x_n)\).
-        <br><em>— Compactness reduces infinitely many local guarantees to finitely many.</em>
-      </li>
-      <li>
-        Set \(\delta = \frac{1}{2}\min(\delta_{x_1}, \ldots, \delta_{x_n}) > 0\).
-        <br><em>— The minimum of finitely many positive numbers is still positive — this is where finiteness is essential.</em>
-      </li>
-      <li>
-        Now take any \(a, b \in K\) with \(d_X(a, b) < \delta\). Point \(a\) lies in some \(B_{\delta_{x_i}/2}(x_i)\), so \(d_X(a, x_i) < \delta_{x_i}/2\).
-        Then \(d_X(b, x_i) \leq d_X(b, a) + d_X(a, x_i) < \delta + \delta_{x_i}/2 \leq \delta_{x_i}\).
-        <br><em>— Triangle inequality lets us route both \(a\) and \(b\) through the same center \(x_i\).</em>
-      </li>
-      <li>
-        Therefore \(d_Y(f(a), f(b)) \leq d_Y(f(a), f(x_i)) + d_Y(f(x_i), f(b)) < \varepsilon/2 + \varepsilon/2 = \varepsilon\).
-        <br><em>— Both \(a\) and \(b\) are within \(\delta_{x_i}\) of \(x_i\), so both outputs are within \(\varepsilon/2\) of \(f(x_i)\). Adding gives \(\varepsilon\).</em>
-      </li>
-    </ul>
-  </div>
-
-  <!-- ====== 5. Visualizations ====== -->
+  <!-- ====== 4. Visualizations ====== -->
   <h2>Visualizations</h2>
 
   <!-- Visualization 1: epsilon-delta continuity -->
@@ -598,7 +415,188 @@
   })();
   </script>
 
-  <!-- ====== 6. Worked Examples ====== -->
+  <!-- ====== 5. Key Theorems & Proofs ====== -->
+  <h2>Theorems</h2>
+
+  <!-- Theorem 1: Equivalent characterizations -->
+  <div class="theorem">
+    <span class="block-label">Theorem 1 — Equivalent Characterizations of Continuity</span>
+    <p>Let \(f: X \to Y\) be a mapping between metric spaces. The following are equivalent:</p>
+    <ol>
+      <li>\(f\) is continuous (Definition 1).</li>
+      <li>The preimage of every open set in \(Y\) is open in \(X\).</li>
+      <li>The preimage of every closed set in \(Y\) is closed in \(X\).</li>
+      <li>For every sequence \((a_n) \subset X\) with \(a_n \to a\), we have \(f(a_n) \to f(a)\).</li>
+    </ol>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch — (1) ⇒ (2)</span>
+    <p class="proof-goal">Goal: show that if \(f\) satisfies the \(\varepsilon\)-\(\delta\) definition, then \(f^{-1}(U)\) is open for every open \(U \subset Y\).</p>
+    <ul>
+      <li>
+        Let \(U \subset Y\) be open and pick any \(x \in f^{-1}(U)\).
+        <br><em>— We need to find a ball around \(x\) that stays inside \(f^{-1}(U)\).</em>
+      </li>
+      <li>
+        Since \(f(x) \in U\) and \(U\) is open, there exists \(\varepsilon > 0\) with \(B_\varepsilon(f(x)) \subset U\).
+        <br><em>— Openness of \(U\) gives us a target radius in the output space.</em>
+      </li>
+      <li>
+        By continuity (Definition 1) applied at \(x\) with this \(\varepsilon\), obtain \(\delta > 0\) such that \(d_X(x,y) < \delta \implies d_Y(f(x),f(y)) < \varepsilon\).
+        <br><em>— This \(\delta\) converts the output guarantee into an input radius.</em>
+      </li>
+      <li>
+        Then \(B_\delta(x) \subset f^{-1}(U)\), so \(f^{-1}(U)\) is open.
+        <br><em>— Every point of \(f^{-1}(U)\) is an interior point, which is exactly the definition of an open set.</em>
+      </li>
+    </ul>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch — (2) ⇒ (1)</span>
+    <p class="proof-goal">Goal: show that the open-preimage property implies the \(\varepsilon\)-\(\delta\) condition at every point.</p>
+    <ul>
+      <li>
+        Fix \(x \in X\) and \(\varepsilon > 0\). Consider the open ball \(U = B_\varepsilon(f(x)) \subset Y\).
+        <br><em>— We construct an explicit open set whose preimage we can exploit.</em>
+      </li>
+      <li>
+        By assumption, \(f^{-1}(U)\) is open in \(X\), and \(x \in f^{-1}(U)\).
+        <br><em>— Openness of the preimage guarantees a ball around \(x\) inside it.</em>
+      </li>
+      <li>
+        So there exists \(\delta > 0\) with \(B_\delta(x) \subset f^{-1}(U)\), meaning \(d_X(x,y) < \delta \implies f(y) \in U \implies d_Y(f(x),f(y)) < \varepsilon\).
+        <br><em>— This is exactly the \(\varepsilon\)-\(\delta\) condition at \(x\).</em>
+      </li>
+    </ul>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch — (1) ⇒ (4) (sequential continuity)</span>
+    <p class="proof-goal">Goal: show that if \(a_n \to a\), then \(f(a_n) \to f(a)\).</p>
+    <ul>
+      <li>
+        Fix \(\varepsilon > 0\). By continuity at \(a\), obtain \(\delta > 0\) such that \(d_X(a, y) < \delta \implies d_Y(f(a), f(y)) < \varepsilon\).
+        <br><em>— We convert the continuity guarantee at \(a\) into a usable \(\delta\).</em>
+      </li>
+      <li>
+        Since \(a_n \to a\), there exists \(N\) such that \(d_X(a_n, a) < \delta\) for all \(n \geq N\).
+        <br><em>— Convergence of the sequence lets us enter the \(\delta\)-ball eventually.</em>
+      </li>
+      <li>
+        For all \(n \geq N\), \(d_Y(f(a_n), f(a)) < \varepsilon\). Since \(\varepsilon\) was arbitrary, \(f(a_n) \to f(a)\).
+        <br><em>— Combining the two bounds gives the sequential convergence we wanted.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Theorem 2: Continuous image of compact is compact -->
+  <div class="theorem">
+    <span class="block-label">Theorem 2 — Continuous Image of a Compact Set is Compact</span>
+    <p>
+      Let \(f: X \to Y\) be continuous. If \(K \subset X\) is compact, then \(f(K) \subset Y\) is compact.
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: given an arbitrary open cover of \(f(K)\), extract a finite subcover.</p>
+    <ul>
+      <li>
+        Let \(\{V_\alpha\}\) be an open cover of \(f(K)\).
+        <br><em>— We start with any open cover of the image and need to reduce it to finitely many sets.</em>
+      </li>
+      <li>
+        Since \(f\) is continuous, each \(f^{-1}(V_\alpha)\) is open in \(X\) (by Theorem 1, characterization (2)).
+        <br><em>— Pull the cover back to the domain, where we can use compactness of \(K\).</em>
+      </li>
+      <li>
+        The collection \(\{f^{-1}(V_\alpha)\}\) covers \(K\), because every \(x \in K\) has \(f(x) \in V_\alpha\) for some \(\alpha\).
+        <br><em>— The preimages form an open cover of the compact set \(K\).</em>
+      </li>
+      <li>
+        By compactness of \(K\), extract a finite subcover: \(K \subset f^{-1}(V_{\alpha_1}) \cup \cdots \cup f^{-1}(V_{\alpha_n})\).
+        <br><em>— This is the key step: compactness turns an infinite cover into a finite one.</em>
+      </li>
+      <li>
+        Applying \(f\), we get \(f(K) \subset V_{\alpha_1} \cup \cdots \cup V_{\alpha_n}\).
+        <br><em>— Push the finite subcover forward to get a finite subcover of \(f(K)\). Done.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Corollary: Extreme Value Theorem -->
+  <div class="theorem">
+    <span class="block-label">Corollary (of Theorem 2) — Extreme Value Theorem</span>
+    <p>
+      Let \(f: X \to \mathbb{R}\) be continuous (where \(\mathbb{R}\) has the Euclidean metric)
+      and let \(K \subset X\) be compact. Then \(f\) attains a maximum and a minimum value on \(K\).
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: show \(f(K)\) contains its supremum and infimum.</p>
+    <ul>
+      <li>
+        By Theorem 2, \(f(K)\) is a compact subset of \(\mathbb{R}\).
+        <br><em>— Continuity preserves compactness, so the image is compact in \(\mathbb{R}\).</em>
+      </li>
+      <li>
+        A compact subset of \(\mathbb{R}\) is closed and bounded (Heine–Borel).
+        <br><em>— Boundedness guarantees that \(\sup f(K)\) and \(\inf f(K)\) are finite real numbers.</em>
+      </li>
+      <li>
+        Since \(f(K)\) is closed, it contains all its limit points — in particular \(\sup f(K) \in f(K)\) and \(\inf f(K) \in f(K)\).
+        <br><em>— Closedness forces the extreme values to actually be achieved, not just approached.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Theorem 3: Continuous on compact ⇒ uniformly continuous -->
+  <div class="theorem">
+    <span class="block-label">Theorem 3 — Continuous on Compact Implies Uniformly Continuous</span>
+    <p>
+      Let \(f: X \to Y\) be continuous and let \(K \subset X\) be compact.
+      Then \(f\) is uniformly continuous on \(K\).
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: find a single \(\delta\) that works for all points in \(K\) simultaneously.</p>
+    <ul>
+      <li>
+        Fix \(\varepsilon > 0\). For each \(x \in K\), continuity gives \(\delta_x > 0\) with
+        \(d_X(x, y) < \delta_x \implies d_Y(f(x), f(y)) < \varepsilon / 2\).
+        <br><em>— Each point has its own local \(\delta_x\); we need to unify them.</em>
+      </li>
+      <li>
+        The open balls \(\{B_{\delta_x / 2}(x)\}_{x \in K}\) form an open cover of \(K\).
+        <br><em>— We use half-radius balls so the triangle inequality will work later.</em>
+      </li>
+      <li>
+        By compactness, extract a finite subcover: \(K \subset B_{\delta_{x_1}/2}(x_1) \cup \cdots \cup B_{\delta_{x_n}/2}(x_n)\).
+        <br><em>— Compactness reduces infinitely many local guarantees to finitely many.</em>
+      </li>
+      <li>
+        Set \(\delta = \frac{1}{2}\min(\delta_{x_1}, \ldots, \delta_{x_n}) > 0\).
+        <br><em>— The minimum of finitely many positive numbers is still positive — this is where finiteness is essential.</em>
+      </li>
+      <li>
+        Now take any \(a, b \in K\) with \(d_X(a, b) < \delta\). Point \(a\) lies in some \(B_{\delta_{x_i}/2}(x_i)\), so \(d_X(a, x_i) < \delta_{x_i}/2\).
+        Then \(d_X(b, x_i) \leq d_X(b, a) + d_X(a, x_i) < \delta + \delta_{x_i}/2 \leq \delta_{x_i}\).
+        <br><em>— Triangle inequality lets us route both \(a\) and \(b\) through the same center \(x_i\).</em>
+      </li>
+      <li>
+        Therefore \(d_Y(f(a), f(b)) \leq d_Y(f(a), f(x_i)) + d_Y(f(x_i), f(b)) < \varepsilon/2 + \varepsilon/2 = \varepsilon\).
+        <br><em>— Both \(a\) and \(b\) are within \(\delta_{x_i}\) of \(x_i\), so both outputs are within \(\varepsilon/2\) of \(f(x_i)\). Adding gives \(\varepsilon\).</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ====== 6. Examples ====== -->
   <h2>Examples</h2>
 
   <div class="example">
@@ -630,7 +628,7 @@
     </p>
   </div>
 
-  <!-- ====== 7. Exercises ====== -->
+  <!-- ====== 7. Exercises  ====== -->
   <h2>Exercises</h2>
 
   <div class="exercise">

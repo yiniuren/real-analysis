@@ -25,7 +25,6 @@
   <h1>CONCEPT NAME</h1>
   <div class="metadata">
     <span>Topic: TOPIC AREA</span>
-    <span>Date: YYYY-MM-DD</span>
     <span>Prerequisites: <a href="PREREQUISITE.html">PREREQUISITE NAME</a></span>
   </div>
 
@@ -57,7 +56,39 @@
     </p>
   </div>
 
-  <!-- ====== 4. Key Theorems & Proofs ====== -->
+  <!-- ====== 4. Visualizations ====== -->
+  <h2>Visualizations</h2>
+
+  <figure>
+    <canvas id="viz1" width="600" height="360"></canvas>
+    <div class="controls">
+      <label>Parameter: <input type="range" id="param1" min="0" max="100" value="50"></label>
+    </div>
+    <figcaption>TODO: Describe what this visualization shows.</figcaption>
+  </figure>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById("viz1");
+      const ctx = canvas.getContext("2d");
+      const slider = document.getElementById("param1");
+
+      function draw() {
+        const val = Number(slider.value);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgba(38, 37, 30, 0.55)";
+        ctx.font = "16px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Visualization placeholder (param = " + val + ")", canvas.width / 2, canvas.height / 2);
+      }
+
+      slider.addEventListener("input", draw);
+      draw();
+    })();
+  </script>
+
+  <!-- ====== 5. Key Theorems & Proofs ====== -->
   <h2>Theorems</h2>
 
   <div class="theorem">
@@ -81,39 +112,6 @@
       </li>
     </ul>
   </div>
-
-  <!-- ====== 5. Visualizations ====== -->
-  <h2>Visualizations</h2>
-
-  <figure>
-    <canvas id="viz1" width="600" height="360"></canvas>
-    <div class="controls">
-      <label>Parameter: <input type="range" id="param1" min="0" max="100" value="50"></label>
-    </div>
-    <figcaption>TODO: Describe what this visualization shows.</figcaption>
-  </figure>
-
-  <script>
-    (function () {
-      const canvas = document.getElementById("viz1");
-      const ctx = canvas.getContext("2d");
-      const slider = document.getElementById("param1");
-
-      function draw() {
-        const val = Number(slider.value);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // TODO: implement visualization drawing logic
-        ctx.fillStyle = "#888";
-        ctx.font = "16px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("Visualization placeholder (param = " + val + ")", canvas.width / 2, canvas.height / 2);
-      }
-
-      slider.addEventListener("input", draw);
-      draw();
-    })();
-  </script>
 
   <!-- ====== 6. Worked Examples ====== -->
   <h2>Examples</h2>
