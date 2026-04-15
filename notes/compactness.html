@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compactness — Real Analysis Notes</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\(', right: '\\)', display: false}
+      ]
+    });"></script>
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+
+  <!-- ====== 1. Title & Metadata ====== -->
+  <h1>Compactness</h1>
+  <div class="metadata">
+    <span>Topic: Topology of R</span>
+  </div>
+
+  <!-- ====== 2. Motivation / Intuition ====== -->
+  <h2>Motivation</h2>
+  <p>
+    Many powerful results in analysis — the extreme value theorem, uniform continuity on
+    closed intervals, convergence of subsequences — all rely on one property: compactness.
+    It is the precise way to say a set is "finite-like" even when it contains infinitely
+    many points. Compact sets behave well: sequences can't escape them, continuous functions
+    are bounded on them, and open covers can always be trimmed down to finitely many pieces.
+  </p>
+  <p>
+    Compactness is abstract because it quantifies over <em>all possible</em> open covers, not
+    just specific ones. The goal of this note is to make that abstraction visual and concrete.
+  </p>
+
+  <!-- ====== 3. Formal Definitions ====== -->
+  <h2>Definitions</h2>
+
+  <!-- Definition 1: Open covering -->
+  <div class="definition">
+    <span class="block-label">Definition 1 — Open Covering</span>
+    <p>
+      Let \((X, d)\) be a metric space and \(A \subset X\). An <strong>open covering</strong>
+      (or open cover) of \(A\) is a collection of open sets \(\{U_\alpha : \alpha \in I\}\)
+      such that
+    </p>
+    <p>$$A \subset \bigcup_{\alpha \in I} U_\alpha.$$</p>
+    <p>
+      If the index set \(I\) is finite, we call it a <strong>finite open covering</strong>
+      and write \(\{U_{\alpha_1}, U_{\alpha_2}, \ldots, U_{\alpha_K}\}\).
+    </p>
+  </div>
+
+  <div class="intuition">
+    <span class="block-label">Intuition</span>
+    <p>
+      Picture the set \(A\) as a shape drawn on the floor. An open cover is a collection of
+      overlapping spotlights (open sets) shining down, positioned so that every single point
+      of \(A\) is illuminated by at least one spotlight. You're allowed to use as many spotlights
+      as you want — even infinitely many. A "finite" cover just means you managed to do it with
+      a limited number.
+    </p>
+  </div>
+
+  <!-- Definition 2: Compactness -->
+  <div class="definition">
+    <span class="block-label">Definition 2 — Compactness</span>
+    <p>
+      A subset \(A \subset X\) is called <strong>compact</strong> if every open covering
+      of \(A\) has a <strong>finite sub-covering</strong>.
+    </p>
+    <p>
+      More precisely: for every open covering \(\{U_\alpha : \alpha \in I\}\) of \(A\),
+      there exist finitely many indices \(\alpha_1, \ldots, \alpha_K \in I\) such that
+    </p>
+    <p>$$A \subset U_{\alpha_1} \cup U_{\alpha_2} \cup \cdots \cup U_{\alpha_K}.$$</p>
+  </div>
+
+  <div class="intuition">
+    <span class="block-label">Intuition</span>
+    <p>
+      No matter how someone tries to cover \(A\) with open sets — even with an absurdly
+      wasteful infinite pile of them — you can always throw away all but finitely many and
+      still have \(A\) fully covered. The key word is <em>every</em>: this must work for
+      any cover anyone could dream up.
+    </p>
+    <p>
+      Why does \([0, 1]\) pass but \((0, 1)\) fail? For the open interval, an adversary can
+      build a cover where each set barely extends inward from 0 — like
+      \((1/n, 2)\) for \(n = 1, 2, 3, \ldots\). No finite selection of these covers all of
+      \((0, 1)\) because points near 0 keep needing the next smaller interval. The closed
+      interval \([0, 1]\) blocks this trick because 0 is in the set, and any open set
+      covering 0 must swallow a neighborhood around it, covering infinitely many of the
+      "problematic" points at once.
+    </p>
+  </div>
+
+  <!-- Definition 3: Sequential compactness -->
+  <div class="definition">
+    <span class="block-label">Definition 3 — Sequential Compactness</span>
+    <p>
+      A subset \(A\) of a metric space \((X, d)\) is called <strong>sequentially compact</strong>
+      if every sequence in \(A\) has a convergent subsequence whose limit lies in \(A\).
+    </p>
+  </div>
+
+  <div class="intuition">
+    <span class="block-label">Intuition</span>
+    <p>
+      Imagine dropping infinitely many marbles inside a room shaped like \(A\). Sequential
+      compactness says the marbles <em>must</em> pile up somewhere inside the room — they
+      can't all spread out evenly forever, and they can't all drift toward a wall that isn't
+      part of the room. If \(A = [0, 1]\), no matter how you scatter the marbles, some
+      subsequence of them will cluster at a point that is still inside \([0, 1]\). If
+      \(A = (0, 1)\), you could place marbles at \(1/n\) — they cluster at 0, but 0 isn't
+      in the room, so the set fails.
+    </p>
+  </div>
+
+  <!-- ====== 4. Visualizations ====== -->
+  <h2>Visualizations</h2>
+
+  <!-- Visualization 1: Open cover / finite subcover -->
+  <h3>Open Covers and Finite Subcovers</h3>
+  <figure>
+    <canvas id="viz-cover" width="640" height="280"></canvas>
+    <div class="controls">
+      <label>
+        Set:
+        <select id="cover-set">
+          <option value="closed" selected>[0, 1] (compact)</option>
+          <option value="open">(0, 1) (not compact)</option>
+        </select>
+      </label>
+      <button id="cover-generate" style="font-family:system-ui;font-size:0.81rem;padding:6px 14px;border-radius:8px;border:1px solid rgba(38,37,30,0.2);background:#ebeae5;color:#26251e;cursor:pointer;">Generate Cover</button>
+      <button id="cover-extract" style="font-family:system-ui;font-size:0.81rem;padding:6px 14px;border-radius:8px;border:1px solid rgba(38,37,30,0.2);background:#ebeae5;color:#26251e;cursor:pointer;">Extract Finite Subcover</button>
+    </div>
+    <figcaption>
+      For \([0, 1]\), any open cover can be reduced to finitely many intervals (shown in orange).
+      For \((0, 1)\), a pathological cover using intervals \((1/n, 2)\) cannot be finitely reduced —
+      points near 0 always need one more set.
+    </figcaption>
+  </figure>
+
+  <script>
+  (function () {
+    var canvas = document.getElementById("viz-cover");
+    var ctx = canvas.getContext("2d");
+    var selectSet = document.getElementById("cover-set");
+    var btnGenerate = document.getElementById("cover-generate");
+    var btnExtract = document.getElementById("cover-extract");
+
+    var W = canvas.width, H = canvas.height;
+    var pad = { l: 50, r: 50, t: 30, b: 50 };
+    var trackY = 140;
+    var trackH = 24;
+
+    var xMin = -0.3, xMax = 1.5;
+    function toX(v) { return pad.l + (v - xMin) / (xMax - xMin) * (W - pad.l - pad.r); }
+
+    var coverIntervals = [];
+    var subcover = [];
+    var mode = "closed";
+    var extracted = false;
+
+    function generateCover() {
+      extracted = false;
+      subcover = [];
+      mode = selectSet.value;
+      coverIntervals = [];
+
+      if (mode === "closed") {
+        var count = 12 + Math.floor(Math.random() * 8);
+        for (var i = 0; i < count; i++) {
+          var center = Math.random();
+          var half = 0.05 + Math.random() * 0.2;
+          coverIntervals.push([center - half, center + half]);
+        }
+        coverIntervals.push([-0.05, 0.15]);
+        coverIntervals.push([0.88, 1.08]);
+      } else {
+        var n = 15;
+        for (var i = 1; i <= n; i++) {
+          coverIntervals.push([1.0 / i, 2.0]);
+        }
+      }
+      draw();
+    }
+
+    function extractSubcover() {
+      if (mode === "open") {
+        extracted = true;
+        subcover = coverIntervals.slice();
+        draw();
+        return;
+      }
+      extracted = true;
+      subcover = [];
+      var covered = 0.0;
+      var sorted = coverIntervals.slice().sort(function (a, b) { return a[0] - b[0]; });
+      for (var i = 0; i < sorted.length && covered < 1.0; i++) {
+        if (sorted[i][1] > covered) {
+          subcover.push(sorted[i]);
+          covered = Math.max(covered, sorted[i][1]);
+        }
+      }
+      draw();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.fillStyle = "#26251e";
+      ctx.font = "bold 14px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "left";
+      var title = mode === "closed" ? "Set: [0, 1]  (compact)" : "Set: (0, 1)  (not compact)";
+      ctx.fillText(title, pad.l, 22);
+
+      // number line
+      ctx.strokeStyle = "rgba(38,37,30,0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(toX(xMin), trackY + trackH / 2);
+      ctx.lineTo(toX(xMax), trackY + trackH / 2);
+      ctx.stroke();
+
+      // ticks
+      ctx.fillStyle = "rgba(38,37,30,0.55)";
+      ctx.font = "12px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      for (var t = 0; t <= 1; t += 0.25) {
+        var tx = toX(t);
+        ctx.beginPath(); ctx.moveTo(tx, trackY + trackH / 2 - 4); ctx.lineTo(tx, trackY + trackH / 2 + 4); ctx.stroke();
+        ctx.fillText(t.toFixed(2), tx, trackY + trackH / 2 + 18);
+      }
+
+      // the set itself
+      var setLeft = toX(0), setRight = toX(1);
+      ctx.fillStyle = "rgba(245, 78, 0, 0.15)";
+      ctx.fillRect(setLeft, trackY, setRight - setLeft, trackH);
+      ctx.strokeStyle = "#f54e00";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(setLeft, trackY); ctx.lineTo(setRight, trackY);
+      ctx.lineTo(setRight, trackY + trackH); ctx.lineTo(setLeft, trackY + trackH);
+      ctx.lineTo(setLeft, trackY);
+      ctx.stroke();
+
+      // endpoints
+      if (mode === "closed") {
+        ctx.fillStyle = "#f54e00";
+        ctx.beginPath(); ctx.arc(setLeft, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(setRight, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.strokeStyle = "#f54e00";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(setLeft, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(setRight, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      // cover intervals
+      var intervals = extracted ? subcover : coverIntervals;
+      var rows = [];
+      for (var i = 0; i < intervals.length; i++) {
+        var iv = intervals[i];
+        var row = 0;
+        for (var r = 0; r < rows.length; r++) {
+          var conflict = false;
+          for (var j = 0; j < rows[r].length; j++) {
+            if (iv[0] < rows[r][j][1] && iv[1] > rows[r][j][0]) { conflict = true; break; }
+          }
+          if (!conflict) { row = r; break; }
+          row = r + 1;
+        }
+        if (!rows[row]) rows[row] = [];
+        rows[row].push(iv);
+
+        var y = 35 + row * 16;
+        var lx = toX(Math.max(iv[0], xMin));
+        var rx = toX(Math.min(iv[1], xMax));
+        var isInSubcover = extracted && subcover.indexOf(iv) !== -1;
+        ctx.fillStyle = isInSubcover ? "rgba(245, 78, 0, 0.3)" : "rgba(159, 187, 224, 0.3)";
+        ctx.fillRect(lx, y, rx - lx, 10);
+        ctx.strokeStyle = isInSubcover ? "rgba(245, 78, 0, 0.7)" : "rgba(159, 187, 224, 0.7)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(lx, y, rx - lx, 10);
+      }
+
+      // message
+      ctx.fillStyle = "#26251e";
+      ctx.font = "13px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      if (extracted) {
+        if (mode === "closed") {
+          ctx.fillStyle = "#1f8a65";
+          ctx.fillText("Finite subcover found: " + subcover.length + " intervals suffice.", pad.l, H - 12);
+        } else {
+          ctx.fillStyle = "#cf2d56";
+          ctx.fillText("No finite subcover exists! Points near 0 always need one more interval.", pad.l, H - 12);
+        }
+      } else {
+        ctx.fillText(intervals.length + " open intervals in the cover. Click 'Extract' to try reducing.", pad.l, H - 12);
+      }
+    }
+
+    btnGenerate.addEventListener("click", generateCover);
+    btnExtract.addEventListener("click", extractSubcover);
+    selectSet.addEventListener("change", generateCover);
+    generateCover();
+  })();
+  </script>
+
+  <!-- Visualization 2: Sequential compactness -->
+  <h3>Sequential Compactness: Clustering Subsequences</h3>
+  <figure>
+    <canvas id="viz-seq" width="640" height="280"></canvas>
+    <div class="controls">
+      <label>
+        Set:
+        <select id="seq-set">
+          <option value="closed" selected>[0, 1] — compact</option>
+          <option value="open">(0, 1) — not compact (sequence 1/n)</option>
+        </select>
+      </label>
+      <button id="seq-reset" style="font-family:system-ui;font-size:0.81rem;padding:6px 14px;border-radius:8px;border:1px solid rgba(38,37,30,0.2);background:#ebeae5;color:#26251e;cursor:pointer;">New Sequence</button>
+    </div>
+    <figcaption>
+      In \([0, 1]\), every sequence has a subsequence clustering at a point inside the set (shown in orange).
+      In \((0, 1)\), the sequence \(1/n\) clusters at 0, which is outside the set — failure.
+    </figcaption>
+  </figure>
+
+  <script>
+  (function () {
+    var canvas = document.getElementById("viz-seq");
+    var ctx = canvas.getContext("2d");
+    var selectSet = document.getElementById("seq-set");
+    var btnReset = document.getElementById("seq-reset");
+
+    var W = canvas.width, H = canvas.height;
+    var pad = { l: 50, r: 50, t: 30, b: 50 };
+    var trackY = 120, trackH = 20;
+
+    var xMin = -0.15, xMax = 1.15;
+    function toX(v) { return pad.l + (v - xMin) / (xMax - xMin) * (W - pad.l - pad.r); }
+
+    var points = [];
+    var clusterPoint = 0;
+    var subsequence = [];
+    var mode = "closed";
+
+    function generate() {
+      mode = selectSet.value;
+      points = [];
+      subsequence = [];
+
+      if (mode === "closed") {
+        for (var i = 0; i < 30; i++) points.push(Math.random());
+        points.sort(function (a, b) { return a - b; });
+        clusterPoint = points[Math.floor(points.length / 2)];
+        var sorted = points.slice().sort(function (a, b) {
+          return Math.abs(a - clusterPoint) - Math.abs(b - clusterPoint);
+        });
+        subsequence = sorted.slice(0, 8);
+      } else {
+        for (var i = 1; i <= 30; i++) points.push(1.0 / i);
+        clusterPoint = 0;
+        subsequence = points.slice(20);
+      }
+      draw();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.fillStyle = "#26251e";
+      ctx.font = "bold 14px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "left";
+      var title = mode === "closed" ? "Sequence in [0, 1]" : "Sequence 1/n in (0, 1)";
+      ctx.fillText(title, pad.l, 22);
+
+      // number line
+      ctx.strokeStyle = "rgba(38,37,30,0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(toX(xMin), trackY + trackH / 2);
+      ctx.lineTo(toX(xMax), trackY + trackH / 2);
+      ctx.stroke();
+
+      // ticks
+      ctx.fillStyle = "rgba(38,37,30,0.55)";
+      ctx.font = "12px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      for (var t = 0; t <= 1; t += 0.25) {
+        var tx = toX(t);
+        ctx.beginPath(); ctx.moveTo(tx, trackY + trackH / 2 - 4); ctx.lineTo(tx, trackY + trackH / 2 + 4); ctx.stroke();
+        ctx.fillText(t.toFixed(2), tx, trackY + trackH / 2 + 18);
+      }
+
+      // set bar
+      var setLeft = toX(0), setRight = toX(1);
+      ctx.fillStyle = "rgba(192, 168, 221, 0.15)";
+      ctx.fillRect(setLeft, trackY, setRight - setLeft, trackH);
+      ctx.strokeStyle = "#c0a8dd";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(setLeft, trackY, setRight - setLeft, trackH);
+
+      // endpoints
+      if (mode === "closed") {
+        ctx.fillStyle = "#c0a8dd";
+        ctx.beginPath(); ctx.arc(setLeft, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(setRight, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.strokeStyle = "#c0a8dd";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(setLeft, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(setRight, trackY + trackH / 2, 4, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      // all points
+      for (var i = 0; i < points.length; i++) {
+        var px = toX(points[i]);
+        var inSub = subsequence.indexOf(points[i]) !== -1;
+        ctx.fillStyle = inSub ? "#f54e00" : "rgba(38,37,30,0.3)";
+        var r = inSub ? 5 : 3;
+        ctx.beginPath();
+        ctx.arc(px, trackY - 15 - (i % 5) * 8, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // cluster point
+      var cpx = toX(clusterPoint);
+      ctx.strokeStyle = "#f54e00";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cpx, trackY - 60);
+      ctx.lineTo(cpx, trackY + trackH + 5);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#f54e00";
+      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("cluster: " + clusterPoint.toFixed(3), cpx, trackY + trackH + 30);
+
+      // verdict
+      ctx.font = "13px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      if (mode === "closed") {
+        ctx.fillStyle = "#1f8a65";
+        ctx.fillText("Subsequence (orange) converges to " + clusterPoint.toFixed(3) + " ∈ [0, 1]. Sequentially compact.", pad.l, H - 10);
+      } else {
+        ctx.fillStyle = "#cf2d56";
+        ctx.fillText("Subsequence clusters at 0, but 0 ∉ (0, 1). Not sequentially compact.", pad.l, H - 10);
+      }
+    }
+
+    selectSet.addEventListener("change", generate);
+    btnReset.addEventListener("click", generate);
+    generate();
+  })();
+  </script>
+
+  <!-- Visualization 3: Closed + bounded vs compact -->
+  <h3>Why "Closed and Bounded" Matters</h3>
+  <figure>
+    <canvas id="viz-hb" width="640" height="260"></canvas>
+    <div class="controls">
+      <label>
+        Example:
+        <select id="hb-case">
+          <option value="closed-unbounded">R (closed but unbounded → not compact)</option>
+          <option value="bounded-open">(0, 1) (bounded but not closed → not compact)</option>
+          <option value="compact" selected>[0, 1] (closed and bounded → compact)</option>
+        </select>
+      </label>
+    </div>
+    <figcaption>
+      In \(\mathbb{R}\) with the Euclidean metric, Heine-Borel says compact = closed + bounded.
+      Pick an example to see which condition fails and why compactness breaks.
+    </figcaption>
+  </figure>
+
+  <script>
+  (function () {
+    var canvas = document.getElementById("viz-hb");
+    var ctx = canvas.getContext("2d");
+    var selectCase = document.getElementById("hb-case");
+
+    var W = canvas.width, H = canvas.height;
+    var pad = { l: 40, r: 40 };
+    var trackY = 90, trackH = 28;
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      var c = selectCase.value;
+
+      var viewMin, viewMax, setLabel, closedLeft, closedRight, bounded;
+
+      if (c === "closed-unbounded") {
+        viewMin = -5; viewMax = 5;
+        setLabel = "ℝ  (all of the real line)";
+        closedLeft = true; closedRight = true; bounded = false;
+      } else if (c === "bounded-open") {
+        viewMin = -0.5; viewMax = 1.5;
+        setLabel = "(0, 1)";
+        closedLeft = false; closedRight = false; bounded = true;
+      } else {
+        viewMin = -0.5; viewMax = 1.5;
+        setLabel = "[0, 1]";
+        closedLeft = true; closedRight = true; bounded = true;
+      }
+
+      function toX(v) { return pad.l + (v - viewMin) / (viewMax - viewMin) * (W - pad.l - pad.r); }
+
+      // title
+      ctx.fillStyle = "#26251e";
+      ctx.font = "bold 14px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("Set: " + setLabel, pad.l, 22);
+
+      // number line
+      ctx.strokeStyle = "rgba(38,37,30,0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, trackY + trackH / 2);
+      ctx.lineTo(W - pad.r, trackY + trackH / 2);
+      ctx.stroke();
+
+      // set region
+      var sL, sR;
+      if (c === "closed-unbounded") {
+        sL = pad.l; sR = W - pad.r;
+      } else {
+        sL = toX(0); sR = toX(1);
+      }
+
+      ctx.fillStyle = "rgba(159, 201, 162, 0.2)";
+      ctx.fillRect(sL, trackY, sR - sL, trackH);
+      ctx.strokeStyle = "#9fc9a2";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(sL, trackY, sR - sL, trackH);
+
+      // arrows for unbounded
+      if (c === "closed-unbounded") {
+        ctx.fillStyle = "#9fc9a2";
+        ctx.beginPath(); ctx.moveTo(pad.l, trackY + trackH / 2); ctx.lineTo(pad.l + 12, trackY + 4); ctx.lineTo(pad.l + 12, trackY + trackH - 4); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(W - pad.r, trackY + trackH / 2); ctx.lineTo(W - pad.r - 12, trackY + 4); ctx.lineTo(W - pad.r - 12, trackY + trackH - 4); ctx.fill();
+      }
+
+      // endpoints
+      if (c !== "closed-unbounded") {
+        if (closedLeft) {
+          ctx.fillStyle = "#9fc9a2";
+          ctx.beginPath(); ctx.arc(sL, trackY + trackH / 2, 5, 0, Math.PI * 2); ctx.fill();
+        } else {
+          ctx.strokeStyle = "#9fc9a2"; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(sL, trackY + trackH / 2, 5, 0, Math.PI * 2); ctx.stroke();
+        }
+        if (closedRight) {
+          ctx.fillStyle = "#9fc9a2";
+          ctx.beginPath(); ctx.arc(sR, trackY + trackH / 2, 5, 0, Math.PI * 2); ctx.fill();
+        } else {
+          ctx.strokeStyle = "#9fc9a2"; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(sR, trackY + trackH / 2, 5, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+
+      // ticks
+      ctx.fillStyle = "rgba(38,37,30,0.55)";
+      ctx.font = "12px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      var step = c === "closed-unbounded" ? 1 : 0.25;
+      var tStart = c === "closed-unbounded" ? -4 : 0;
+      var tEnd = c === "closed-unbounded" ? 4 : 1;
+      for (var t = tStart; t <= tEnd + 0.01; t += step) {
+        var tx = toX(t);
+        ctx.beginPath(); ctx.moveTo(tx, trackY + trackH / 2 - 4); ctx.lineTo(tx, trackY + trackH / 2 + 4); ctx.stroke();
+        ctx.fillText(t % 1 === 0 ? t.toString() : t.toFixed(2), tx, trackY + trackH / 2 + 20);
+      }
+
+      // status badges
+      var y = trackY + trackH + 40;
+      ctx.font = "13px system-ui, sans-serif";
+
+      var isClosed = (c !== "bounded-open");
+      var isBounded = (c !== "closed-unbounded");
+      var isCompact = (c === "compact");
+
+      ctx.fillStyle = isClosed ? "#1f8a65" : "#cf2d56";
+      ctx.textAlign = "left";
+      ctx.fillText((isClosed ? "✓" : "✗") + " Closed", pad.l, y);
+
+      ctx.fillStyle = isBounded ? "#1f8a65" : "#cf2d56";
+      ctx.fillText((isBounded ? "✓" : "✗") + " Bounded", pad.l + 130, y);
+
+      ctx.fillStyle = isCompact ? "#1f8a65" : "#cf2d56";
+      ctx.font = "bold 13px system-ui, sans-serif";
+      ctx.fillText((isCompact ? "✓" : "✗") + " Compact (Heine-Borel)", pad.l + 270, y);
+
+      // explanation
+      ctx.fillStyle = "rgba(38,37,30,0.7)";
+      ctx.font = "12px system-ui, sans-serif";
+      if (c === "closed-unbounded") {
+        ctx.fillText("Sequence n = 1, 2, 3, … escapes to ∞ with no convergent subsequence in ℝ.", pad.l, y + 22);
+      } else if (c === "bounded-open") {
+        ctx.fillText("Sequence 1/n → 0, but 0 ∉ (0,1). The limit escapes through the missing boundary.", pad.l, y + 22);
+      } else {
+        ctx.fillText("Every sequence in [0,1] has a subsequence converging to a point in [0,1].", pad.l, y + 22);
+      }
+    }
+
+    selectCase.addEventListener("change", draw);
+    draw();
+  })();
+  </script>
+
+  <!-- ====== 5. Key Theorems & Proofs ====== -->
+  <h2>Theorems</h2>
+
+  <!-- Theorem 1: Compact iff sequentially compact -->
+  <div class="theorem">
+    <span class="block-label">Theorem 1 — Compact iff Sequentially Compact</span>
+    <p>
+      In any metric space, a set is compact if and only if it is sequentially compact.
+    </p>
+    <p><em>The proof is long and therefore omitted (see e.g. Rudin, Theorem 3.6).</em></p>
+  </div>
+
+  <!-- Theorem 2: Closed subset of compact is compact -->
+  <div class="theorem">
+    <span class="block-label">Theorem 2 — Closed Subset of a Compact Set is Compact</span>
+    <p>
+      Let \((X, d)\) be any metric space, \(K \subset X\) compact, and \(F \subset K\) closed.
+      Then \(F\) is compact.
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: given any open cover of \(F\), extract a finite subcover.</p>
+    <ul>
+      <li>
+        Let \(\{U_\alpha\}\) be an open cover of \(F\).
+        <br><em>— Start with an arbitrary open cover of the closed subset \(F\).</em>
+      </li>
+      <li>
+        Since \(F\) is closed, \(F^c = X \setminus F\) is open.
+        <br><em>— We'll use the complement to extend the cover to all of \(K\).</em>
+      </li>
+      <li>
+        The collection \(\{U_\alpha\} \cup \{F^c\}\) is an open cover of \(K\):
+        every point of \(K\) is either in \(F\) (covered by some \(U_\alpha\)) or in \(F^c\).
+        <br><em>— By adding one more open set, we turn a cover of \(F\) into a cover of the compact set \(K\).</em>
+      </li>
+      <li>
+        Since \(K\) is compact, extract a finite subcover: \(K \subset U_{\alpha_1} \cup \cdots \cup U_{\alpha_n} \cup F^c\).
+        <br><em>— Compactness of \(K\) gives us finitely many sets.</em>
+      </li>
+      <li>
+        Then \(F \subset U_{\alpha_1} \cup \cdots \cup U_{\alpha_n}\) (since \(F \cap F^c = \emptyset\), the \(F^c\) term contributes nothing to covering \(F\)).
+        <br><em>— Drop \(F^c\) and we have a finite subcover of \(F\). Done.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Theorem 3: Compact implies closed and bounded -->
+  <div class="theorem">
+    <span class="block-label">Theorem 3 — Compact Implies Closed and Bounded</span>
+    <p>
+      In any metric space, every compact set is closed and bounded.
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof (bounded)</span>
+    <p class="proof-goal">Goal: show a compact set \(K\) fits inside some ball of finite radius.</p>
+    <ul>
+      <li>
+        Fix any point \(p \in X\). The open balls \(\{B_n(p)\}_{n=1}^{\infty}\) form an open cover of \(K\) (indeed, of all of \(X\)).
+        <br><em>— Every point in \(X\) is at finite distance from \(p\), so it lies in some \(B_n(p)\).</em>
+      </li>
+      <li>
+        By compactness, extract a finite subcover: \(K \subset B_{n_1}(p) \cup \cdots \cup B_{n_k}(p)\).
+        <br><em>— Finitely many concentric balls suffice.</em>
+      </li>
+      <li>
+        Let \(N = \max(n_1, \ldots, n_k)\). Then \(K \subset B_N(p)\), so \(K\) is bounded.
+        <br><em>— The largest ball contains all the others, giving a single finite bound.</em>
+      </li>
+    </ul>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof (closed)</span>
+    <p class="proof-goal">Goal: show \(K\) contains all its limit points — equivalently, \(K^c\) is open.</p>
+    <ul>
+      <li>
+        Let \(q \notin K\). For each \(x \in K\), let \(r_x = d(q, x)/2 > 0\).
+        The balls \(\{B_{r_x}(x)\}_{x \in K}\) cover \(K\).
+        <br><em>— We build an open cover of \(K\) using balls centered at points of \(K\), each half the distance to \(q\).</em>
+      </li>
+      <li>
+        By compactness, extract a finite subcover: \(K \subset B_{r_{x_1}}(x_1) \cup \cdots \cup B_{r_{x_n}}(x_n)\).
+        <br><em>— Finitely many balls around points \(x_1, \ldots, x_n\) cover \(K\).</em>
+      </li>
+      <li>
+        Set \(r = \min(r_{x_1}, \ldots, r_{x_n}) > 0\). Then \(B_r(q) \cap K = \emptyset\).
+        <br><em>— Any point within distance \(r\) of \(q\) is too far from every \(x_i\) to be in the corresponding ball. So \(q\) has an open neighborhood disjoint from \(K\).</em>
+      </li>
+      <li>
+        Since every \(q \notin K\) has an open ball around it missing \(K\), the complement \(K^c\) is open, so \(K\) is closed.
+        <br><em>— This is exactly the definition of a closed set.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Theorem 4: Heine-Borel -->
+  <div class="theorem">
+    <span class="block-label">Theorem 4 — The Heine-Borel Theorem</span>
+    <p>
+      In \(\mathbb{R}^n\) with the Euclidean metric, a set is compact if and only if it is
+      closed and bounded.
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch</span>
+    <p class="proof-goal">Goal: the hard direction is "closed and bounded ⇒ compact." Theorem 3 gives the other direction.</p>
+    <ul>
+      <li>
+        (⇒) Already proved: Theorem 3 shows compact implies closed and bounded in any metric space.
+        <br><em>— This direction doesn't need the Euclidean structure at all.</em>
+      </li>
+      <li>
+        (⇐) Suppose \(A \subset \mathbb{R}^n\) is closed and bounded. Since \(A\) is bounded, it sits inside a closed box \([-M, M]^n\).
+        <br><em>— We reduce to showing the box is compact, then use Theorem 2 (closed subset of compact is compact).</em>
+      </li>
+      <li>
+        The key step is proving \([-M, M]^n\) is compact. This is done by contradiction: assume an open cover has no finite subcover, bisect the box repeatedly, and use the nested intervals theorem (Bolzano-Weierstrass) to find a point that must be covered yet leads to a contradiction.
+        <br><em>— This bisection argument is specific to \(\mathbb{R}^n\) and does not work in general metric spaces.</em>
+      </li>
+      <li>
+        Since \(A\) is a closed subset of the compact set \([-M, M]^n\), Theorem 2 gives that \(A\) is compact.
+        <br><em>— The two prior theorems combine to finish the proof.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ====== 6. Examples ====== -->
+  <h2>Examples</h2>
+
+  <div class="example">
+    <span class="block-label">Example 1 — Singletons are compact</span>
+    <p>
+      Any singleton \(\{x\}\) is compact: given any open cover, at least one set \(U_\alpha\)
+      contains \(x\), so \(\{U_\alpha\}\) alone is a finite subcover.
+    </p>
+  </div>
+
+  <div class="example">
+    <span class="block-label">Example 2 — Finite unions of compact sets are compact</span>
+    <p>
+      If \(K_1, \ldots, K_N\) are compact, then \(\bigcup_{j=1}^{N} K_j\) is compact.
+      Given any open cover of the union, it covers each \(K_j\), so extract a finite subcover
+      for each. The union of these \(N\) finite subcovers is still finite and covers the whole union.
+    </p>
+  </div>
+
+  <div class="example">
+    <span class="block-label">Example 3 — Closed but not compact</span>
+    <p>
+      \(\mathbb{R}\) itself is closed (its complement \(\emptyset\) is open) but not compact.
+      The cover \(\{(-n, n) : n \in \mathbb{N}\}\) has no finite subcover, because any finite
+      selection is bounded by \(\max(n_1, \ldots, n_k)\), missing points beyond that bound.
+    </p>
+  </div>
+
+  <div class="example">
+    <span class="block-label">Example 4 — Bounded but not compact</span>
+    <p>
+      \((0, 1)\) is bounded but not compact (it is not closed). The cover
+      \(\{(1/n, 1) : n \geq 2\}\) covers \((0, 1)\) but no finite subcollection does: for any
+      finite selection with largest index \(N\), points in \((0, 1/N)\) are missed.
+    </p>
+  </div>
+
+  <div class="example">
+    <span class="block-label">Example 5 — Closed and bounded but not compact (general metric space)</span>
+    <p>
+      Let \(X = \mathbb{N}\) with the discrete metric (\(d(m, n) = 1\) if \(m \neq n\),
+      \(d(m, m) = 0\)). Then \(X\) is closed (every set is closed in the discrete metric)
+      and bounded (every pair of points has distance at most 1). But \(X\) is not compact:
+      the cover \(\{\{n\} : n \in \mathbb{N}\}\) consists of open singletons with no finite
+      subcover. This shows Heine-Borel fails outside \(\mathbb{R}^n\).
+    </p>
+  </div>
+
+  <!-- ====== 7. Exercises ====== -->
+  <h2>Exercises</h2>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 1</span>
+    <p>
+      Prove directly from the definition that any finite set \(\{x_1, x_2, \ldots, x_n\}\)
+      in a metric space is compact.
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        Let \(\{U_\alpha\}\) be any open cover. For each \(x_i\), pick one \(U_{\alpha_i}\)
+        containing \(x_i\). Then \(\{U_{\alpha_1}, \ldots, U_{\alpha_n}\}\) is a finite
+        subcover, since every point of the set is in some \(U_{\alpha_i}\).
+      </p>
+    </details>
+  </div>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 2</span>
+    <p>
+      Let \(K_1, \ldots, K_N\) be compact subsets of a metric space. Prove that
+      \(\bigcup_{j=1}^{N} K_j\) is compact.
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        Let \(\{U_\alpha\}\) be an open cover of \(\bigcup K_j\). It is also an open cover of
+        each \(K_j\). By compactness of \(K_j\), extract a finite subcover
+        \(\mathcal{F}_j \subset \{U_\alpha\}\). Then
+        \(\mathcal{F}_1 \cup \cdots \cup \mathcal{F}_N\) is a finite subcover of the union
+        (a finite union of finite sets is finite).
+      </p>
+    </details>
+  </div>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 3</span>
+    <p>
+      Give an example of a subset of a metric space that is both closed and bounded but
+      <em>not</em> compact. (Hint: consider the discrete metric on an infinite set.)
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        Take \(X = \mathbb{Z}\) with the discrete metric. The entire set \(\mathbb{Z}\) is
+        closed (every set is closed in the discrete topology) and bounded (all pairwise
+        distances are \(\leq 1\)). But the open cover \(\{\{n\} : n \in \mathbb{Z}\}\)
+        (each singleton is open in the discrete metric) has no finite subcover, so
+        \(\mathbb{Z}\) is not compact. This works because Heine-Borel applies only to
+        \(\mathbb{R}^n\) with the Euclidean metric.
+      </p>
+    </details>
+  </div>
+
+  <!-- ====== 8. References ====== -->
+  <h2>References</h2>
+  <ul>
+    <li>MTH 311, Spring 2026 — Worksheet 7: Compactness.</li>
+  </ul>
+
+</body>
+</html>
