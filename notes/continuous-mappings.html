@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continuous Mappings — Real Analysis Notes</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\(', right: '\\)', display: false}
+      ]
+    });"></script>
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+
+  <!-- ====== 1. Title & Metadata ====== -->
+  <h1>Continuous Mappings</h1>
+  <div class="metadata">
+    <span>Topic: Limits and Continuity</span>
+    <span>Date: 2026-04-15</span>
+    <span>Reference: MTH 311 Worksheet 8</span>
+  </div>
+
+  <!-- ====== 2. Motivation / Intuition ====== -->
+  <h2>Motivation</h2>
+  <p>
+    Continuity captures the idea that a function has "no surprises" — small changes in the input
+    produce small changes in the output. This is the foundation for nearly everything in analysis:
+    you cannot talk about limits, derivatives, or integrals in a meaningful way without first
+    understanding when and how a function preserves closeness.
+  </p>
+  <p>
+    We also care about <em>uniform</em> continuity, a stronger cousin that says the function
+    behaves equally well everywhere in its domain — no point is "harder" to control than any other.
+    This distinction matters most on compact sets, where the two notions turn out to coincide.
+  </p>
+
+  <!-- ====== 3. Formal Definitions ====== -->
+  <h2>Definitions</h2>
+
+  <!-- Definition 1: Continuity (epsilon-delta) -->
+  <div class="definition">
+    <span class="block-label">Definition 1 — Continuity</span>
+    <p>
+      Let \((X, d_X)\) and \((Y, d_Y)\) be metric spaces. A mapping \(f: X \to Y\) is
+      <strong>continuous</strong> if for every \(x \in X\) and every \(\varepsilon > 0\),
+      there exists \(\delta > 0\) such that
+    </p>
+    <p>
+      $$d_X(x, y) < \delta \implies d_Y(f(x), f(y)) < \varepsilon.$$
+    </p>
+  </div>
+
+  <div class="intuition">
+    <span class="block-label">Intuition</span>
+    <p>
+      Pick any point \(x\) and draw a tiny target circle of radius \(\varepsilon\) around
+      \(f(x)\) in the output space. Continuity promises that you can always find a small enough
+      input circle of radius \(\delta\) around \(x\) so that every point inside it lands inside
+      that target. The catch: the size of \(\delta\) you need is allowed to depend on which \(x\)
+      you picked. Near a steep part of the graph you might need a much smaller \(\delta\) than
+      near a flat part.
+    </p>
+  </div>
+
+  <!-- Definition 2: Uniform continuity -->
+  <div class="definition">
+    <span class="block-label">Definition 2 — Uniform Continuity</span>
+    <p>
+      A mapping \(f: X \to Y\) is <strong>uniformly continuous</strong> if for every
+      \(\varepsilon > 0\) there exists \(\delta > 0\) such that for <em>all</em>
+      \(x, y \in X\),
+    </p>
+    <p>
+      $$d_X(x, y) < \delta \implies d_Y(f(x), f(y)) < \varepsilon.$$
+    </p>
+    <p>
+      In other words, the \(\delta\) does not depend on the choice of \(x\).
+    </p>
+  </div>
+
+  <div class="intuition">
+    <span class="block-label">Intuition</span>
+    <p>
+      Same picture as before, but now one single \(\delta\) must work for <em>every</em> point
+      in the domain simultaneously. You can't let \(\delta\) shrink as you move around — it has
+      to be a universal guarantee. For \(f(x) = x^2\) on all of \(\mathbb{R}\), this fails:
+      far from the origin the graph is so steep that any fixed \(\delta\) eventually lets outputs
+      escape the \(\varepsilon\)-band. But on a bounded interval like \([0, 3]\), the steepness
+      is capped, so one \(\delta\) suffices everywhere.
+    </p>
+  </div>
+
+  <!-- ====== 4. Key Theorems & Proofs ====== -->
+  <h2>Theorems</h2>
+
+  <!-- Theorem 1: Equivalent characterizations -->
+  <div class="theorem">
+    <span class="block-label">Theorem 1 — Equivalent Characterizations of Continuity</span>
+    <p>Let \(f: X \to Y\) be a mapping between metric spaces. The following are equivalent:</p>
+    <ol>
+      <li>\(f\) is continuous (Definition 1).</li>
+      <li>The preimage of every open set in \(Y\) is open in \(X\).</li>
+      <li>The preimage of every closed set in \(Y\) is closed in \(X\).</li>
+      <li>For every sequence \((a_n) \subset X\) with \(a_n \to a\), we have \(f(a_n) \to f(a)\).</li>
+    </ol>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch — (1) ⇒ (2)</span>
+    <p class="proof-goal">Goal: show that if \(f\) satisfies the \(\varepsilon\)-\(\delta\) definition, then \(f^{-1}(U)\) is open for every open \(U \subset Y\).</p>
+    <ul>
+      <li>
+        Let \(U \subset Y\) be open and pick any \(x \in f^{-1}(U)\).
+        <br><em>— We need to find a ball around \(x\) that stays inside \(f^{-1}(U)\).</em>
+      </li>
+      <li>
+        Since \(f(x) \in U\) and \(U\) is open, there exists \(\varepsilon > 0\) with \(B_\varepsilon(f(x)) \subset U\).
+        <br><em>— Openness of \(U\) gives us a target radius in the output space.</em>
+      </li>
+      <li>
+        By continuity (Definition 1) applied at \(x\) with this \(\varepsilon\), obtain \(\delta > 0\) such that \(d_X(x,y) < \delta \implies d_Y(f(x),f(y)) < \varepsilon\).
+        <br><em>— This \(\delta\) converts the output guarantee into an input radius.</em>
+      </li>
+      <li>
+        Then \(B_\delta(x) \subset f^{-1}(U)\), so \(f^{-1}(U)\) is open.
+        <br><em>— Every point of \(f^{-1}(U)\) is an interior point, which is exactly the definition of an open set.</em>
+      </li>
+    </ul>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch — (2) ⇒ (1)</span>
+    <p class="proof-goal">Goal: show that the open-preimage property implies the \(\varepsilon\)-\(\delta\) condition at every point.</p>
+    <ul>
+      <li>
+        Fix \(x \in X\) and \(\varepsilon > 0\). Consider the open ball \(U = B_\varepsilon(f(x)) \subset Y\).
+        <br><em>— We construct an explicit open set whose preimage we can exploit.</em>
+      </li>
+      <li>
+        By assumption, \(f^{-1}(U)\) is open in \(X\), and \(x \in f^{-1}(U)\).
+        <br><em>— Openness of the preimage guarantees a ball around \(x\) inside it.</em>
+      </li>
+      <li>
+        So there exists \(\delta > 0\) with \(B_\delta(x) \subset f^{-1}(U)\), meaning \(d_X(x,y) < \delta \implies f(y) \in U \implies d_Y(f(x),f(y)) < \varepsilon\).
+        <br><em>— This is exactly the \(\varepsilon\)-\(\delta\) condition at \(x\).</em>
+      </li>
+    </ul>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch — (1) ⇒ (4) (sequential continuity)</span>
+    <p class="proof-goal">Goal: show that if \(a_n \to a\), then \(f(a_n) \to f(a)\).</p>
+    <ul>
+      <li>
+        Fix \(\varepsilon > 0\). By continuity at \(a\), obtain \(\delta > 0\) such that \(d_X(a, y) < \delta \implies d_Y(f(a), f(y)) < \varepsilon\).
+        <br><em>— We convert the continuity guarantee at \(a\) into a usable \(\delta\).</em>
+      </li>
+      <li>
+        Since \(a_n \to a\), there exists \(N\) such that \(d_X(a_n, a) < \delta\) for all \(n \geq N\).
+        <br><em>— Convergence of the sequence lets us enter the \(\delta\)-ball eventually.</em>
+      </li>
+      <li>
+        For all \(n \geq N\), \(d_Y(f(a_n), f(a)) < \varepsilon\). Since \(\varepsilon\) was arbitrary, \(f(a_n) \to f(a)\).
+        <br><em>— Combining the two bounds gives the sequential convergence we wanted.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Theorem 2: Continuous image of compact is compact -->
+  <div class="theorem">
+    <span class="block-label">Theorem 2 — Continuous Image of a Compact Set is Compact</span>
+    <p>
+      Let \(f: X \to Y\) be continuous. If \(K \subset X\) is compact, then \(f(K) \subset Y\) is compact.
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: given an arbitrary open cover of \(f(K)\), extract a finite subcover.</p>
+    <ul>
+      <li>
+        Let \(\{V_\alpha\}\) be an open cover of \(f(K)\).
+        <br><em>— We start with any open cover of the image and need to reduce it to finitely many sets.</em>
+      </li>
+      <li>
+        Since \(f\) is continuous, each \(f^{-1}(V_\alpha)\) is open in \(X\) (by Theorem 1, characterization (2)).
+        <br><em>— Pull the cover back to the domain, where we can use compactness of \(K\).</em>
+      </li>
+      <li>
+        The collection \(\{f^{-1}(V_\alpha)\}\) covers \(K\), because every \(x \in K\) has \(f(x) \in V_\alpha\) for some \(\alpha\).
+        <br><em>— The preimages form an open cover of the compact set \(K\).</em>
+      </li>
+      <li>
+        By compactness of \(K\), extract a finite subcover: \(K \subset f^{-1}(V_{\alpha_1}) \cup \cdots \cup f^{-1}(V_{\alpha_n})\).
+        <br><em>— This is the key step: compactness turns an infinite cover into a finite one.</em>
+      </li>
+      <li>
+        Applying \(f\), we get \(f(K) \subset V_{\alpha_1} \cup \cdots \cup V_{\alpha_n}\).
+        <br><em>— Push the finite subcover forward to get a finite subcover of \(f(K)\). Done.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Corollary: Extreme Value Theorem -->
+  <div class="theorem">
+    <span class="block-label">Corollary (of Theorem 2) — Extreme Value Theorem</span>
+    <p>
+      Let \(f: X \to \mathbb{R}\) be continuous (where \(\mathbb{R}\) has the Euclidean metric)
+      and let \(K \subset X\) be compact. Then \(f\) attains a maximum and a minimum value on \(K\).
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: show \(f(K)\) contains its supremum and infimum.</p>
+    <ul>
+      <li>
+        By Theorem 2, \(f(K)\) is a compact subset of \(\mathbb{R}\).
+        <br><em>— Continuity preserves compactness, so the image is compact in \(\mathbb{R}\).</em>
+      </li>
+      <li>
+        A compact subset of \(\mathbb{R}\) is closed and bounded (Heine–Borel).
+        <br><em>— Boundedness guarantees that \(\sup f(K)\) and \(\inf f(K)\) are finite real numbers.</em>
+      </li>
+      <li>
+        Since \(f(K)\) is closed, it contains all its limit points — in particular \(\sup f(K) \in f(K)\) and \(\inf f(K) \in f(K)\).
+        <br><em>— Closedness forces the extreme values to actually be achieved, not just approached.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Theorem 3: Continuous on compact ⇒ uniformly continuous -->
+  <div class="theorem">
+    <span class="block-label">Theorem 3 — Continuous on Compact Implies Uniformly Continuous</span>
+    <p>
+      Let \(f: X \to Y\) be continuous and let \(K \subset X\) be compact.
+      Then \(f\) is uniformly continuous on \(K\).
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: find a single \(\delta\) that works for all points in \(K\) simultaneously.</p>
+    <ul>
+      <li>
+        Fix \(\varepsilon > 0\). For each \(x \in K\), continuity gives \(\delta_x > 0\) with
+        \(d_X(x, y) < \delta_x \implies d_Y(f(x), f(y)) < \varepsilon / 2\).
+        <br><em>— Each point has its own local \(\delta_x\); we need to unify them.</em>
+      </li>
+      <li>
+        The open balls \(\{B_{\delta_x / 2}(x)\}_{x \in K}\) form an open cover of \(K\).
+        <br><em>— We use half-radius balls so the triangle inequality will work later.</em>
+      </li>
+      <li>
+        By compactness, extract a finite subcover: \(K \subset B_{\delta_{x_1}/2}(x_1) \cup \cdots \cup B_{\delta_{x_n}/2}(x_n)\).
+        <br><em>— Compactness reduces infinitely many local guarantees to finitely many.</em>
+      </li>
+      <li>
+        Set \(\delta = \frac{1}{2}\min(\delta_{x_1}, \ldots, \delta_{x_n}) > 0\).
+        <br><em>— The minimum of finitely many positive numbers is still positive — this is where finiteness is essential.</em>
+      </li>
+      <li>
+        Now take any \(a, b \in K\) with \(d_X(a, b) < \delta\). Point \(a\) lies in some \(B_{\delta_{x_i}/2}(x_i)\), so \(d_X(a, x_i) < \delta_{x_i}/2\).
+        Then \(d_X(b, x_i) \leq d_X(b, a) + d_X(a, x_i) < \delta + \delta_{x_i}/2 \leq \delta_{x_i}\).
+        <br><em>— Triangle inequality lets us route both \(a\) and \(b\) through the same center \(x_i\).</em>
+      </li>
+      <li>
+        Therefore \(d_Y(f(a), f(b)) \leq d_Y(f(a), f(x_i)) + d_Y(f(x_i), f(b)) < \varepsilon/2 + \varepsilon/2 = \varepsilon\).
+        <br><em>— Both \(a\) and \(b\) are within \(\delta_{x_i}\) of \(x_i\), so both outputs are within \(\varepsilon/2\) of \(f(x_i)\). Adding gives \(\varepsilon\).</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ====== 5. Visualizations ====== -->
+  <h2>Visualizations</h2>
+
+  <!-- Visualization 1: epsilon-delta continuity -->
+  <h3>Continuity: the \(\varepsilon\)-\(\delta\) picture</h3>
+  <figure>
+    <canvas id="viz-continuity" width="640" height="400"></canvas>
+    <div class="controls">
+      <label>\(x_0\): <input type="range" id="cont-x0" min="5" max="95" value="50"> <span id="cont-x0-val"></span></label>
+      <label>\(\varepsilon\): <input type="range" id="cont-eps" min="1" max="60" value="20"> <span id="cont-eps-val"></span></label>
+    </div>
+    <figcaption>
+      Drag the sliders to move the point \(x_0\) and change \(\varepsilon\).
+      The blue band is the \(\varepsilon\)-target on the \(y\)-axis;
+      the orange band is the largest \(\delta\) on the \(x\)-axis that keeps outputs inside.
+      Notice how \(\delta\) shrinks when \(x_0\) moves to steeper parts of the curve.
+    </figcaption>
+  </figure>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById("viz-continuity");
+    const ctx = canvas.getContext("2d");
+    const sliderX0 = document.getElementById("cont-x0");
+    const sliderEps = document.getElementById("cont-eps");
+    const spanX0 = document.getElementById("cont-x0-val");
+    const spanEps = document.getElementById("cont-eps-val");
+
+    const W = canvas.width, H = canvas.height;
+    const pad = { l: 50, r: 20, t: 20, b: 40 };
+    const plotW = W - pad.l - pad.r;
+    const plotH = H - pad.t - pad.b;
+
+    const xMin = -1, xMax = 4;
+    const yMin = -1, yMax = 10;
+
+    function toCanvasX(x) { return pad.l + (x - xMin) / (xMax - xMin) * plotW; }
+    function toCanvasY(y) { return pad.t + plotH - (y - yMin) / (yMax - yMin) * plotH; }
+    function fromSliderX0(v) { return xMin + (v / 100) * (xMax - xMin); }
+    function fromSliderEps(v) { return 0.05 + (v / 100) * (yMax - yMin) * 0.55; }
+
+    function f(x) { return x * x; }
+
+    function computeDelta(x0, eps) {
+      var fx0 = f(x0);
+      var delta = 0.001;
+      while (delta < (xMax - xMin)) {
+        var yLo = f(x0 - delta);
+        var yHi = f(x0 + delta);
+        if (Math.abs(yHi - fx0) >= eps || Math.abs(yLo - fx0) >= eps) break;
+        delta += 0.001;
+      }
+      return Math.max(delta - 0.001, 0.001);
+    }
+
+    function draw() {
+      var x0 = fromSliderX0(Number(sliderX0.value));
+      var eps = fromSliderEps(Number(sliderEps.value));
+      var fx0 = f(x0);
+      var delta = computeDelta(x0, eps);
+
+      spanX0.textContent = x0.toFixed(2);
+      spanEps.textContent = eps.toFixed(2);
+
+      ctx.clearRect(0, 0, W, H);
+
+      // axes
+      ctx.strokeStyle = "rgba(38, 37, 30, 0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, H - pad.b);
+      ctx.lineTo(W - pad.r, H - pad.b);
+      ctx.stroke();
+
+      // axis labels
+      ctx.fillStyle = "rgba(38, 37, 30, 0.55)";
+      ctx.font = "13px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "center";
+      for (var tx = Math.ceil(xMin); tx <= xMax; tx++) {
+        ctx.fillText(tx, toCanvasX(tx), H - pad.b + 18);
+      }
+      ctx.textAlign = "right";
+      for (var ty = Math.ceil(yMin); ty <= yMax; ty += 2) {
+        ctx.fillText(ty, pad.l - 8, toCanvasY(ty) + 4);
+      }
+
+      // epsilon band (y-axis) — Read blue
+      ctx.fillStyle = "rgba(159, 187, 224, 0.2)";
+      var eBandTop = toCanvasY(fx0 + eps);
+      var eBandBot = toCanvasY(fx0 - eps);
+      ctx.fillRect(pad.l, eBandTop, plotW, eBandBot - eBandTop);
+      ctx.strokeStyle = "rgba(159, 187, 224, 0.6)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(pad.l, eBandTop); ctx.lineTo(W - pad.r, eBandTop); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad.l, eBandBot); ctx.lineTo(W - pad.r, eBandBot); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // delta band (x-axis) — accent orange
+      ctx.fillStyle = "rgba(245, 78, 0, 0.1)";
+      var dLeft = toCanvasX(x0 - delta);
+      var dRight = toCanvasX(x0 + delta);
+      ctx.fillRect(dLeft, pad.t, dRight - dLeft, plotH);
+      ctx.strokeStyle = "rgba(245, 78, 0, 0.45)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(dLeft, pad.t); ctx.lineTo(dLeft, H - pad.b); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(dRight, pad.t); ctx.lineTo(dRight, H - pad.b); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // curve f(x) = x^2
+      ctx.strokeStyle = "#26251e";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (var px = 0; px <= plotW; px++) {
+        var x = xMin + (px / plotW) * (xMax - xMin);
+        var y = f(x);
+        var cx = pad.l + px;
+        var cy = toCanvasY(y);
+        if (px === 0) ctx.moveTo(cx, cy); else ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+
+      // point — accent orange
+      ctx.fillStyle = "#f54e00";
+      ctx.beginPath();
+      ctx.arc(toCanvasX(x0), toCanvasY(fx0), 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // labels
+      ctx.fillStyle = "rgba(90, 138, 181, 0.9)";
+      ctx.font = "bold 13px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("ε = " + eps.toFixed(2), W - pad.r - 80, eBandTop - 4);
+
+      ctx.fillStyle = "rgba(245, 78, 0, 0.85)";
+      ctx.fillText("δ = " + delta.toFixed(3), dRight + 4, H - pad.b - 6);
+
+      // function label
+      ctx.fillStyle = "#26251e";
+      ctx.font = "italic 14px Palatino Linotype, Georgia, serif";
+      ctx.textAlign = "left";
+      ctx.fillText("f(x) = x²", pad.l + 8, pad.t + 18);
+    }
+
+    sliderX0.addEventListener("input", draw);
+    sliderEps.addEventListener("input", draw);
+    draw();
+  })();
+  </script>
+
+  <!-- Visualization 2: uniform continuity -->
+  <h3>Uniform Continuity: one \(\delta\) for all points</h3>
+  <figure>
+    <canvas id="viz-uniform" width="640" height="400"></canvas>
+    <div class="controls">
+      <label>\(\varepsilon\): <input type="range" id="uni-eps" min="1" max="60" value="25"> <span id="uni-eps-val"></span></label>
+      <label>
+        Function:
+        <select id="uni-func">
+          <option value="linear" selected>f(x) = x  on [0, 3] (uniformly continuous)</option>
+          <option value="quadratic">f(x) = x²  on [0, 3] (uniformly continuous on compact)</option>
+          <option value="sin-inv">f(x) = sin(1/x)  on (0, 3] (not uniformly continuous near 0)</option>
+        </select>
+      </label>
+    </div>
+    <figcaption>
+      The green band is the universal \(\delta\) that works for every point at once.
+      Switch functions to see how uniform continuity can succeed or fail.
+      Multiple sample points are shown simultaneously to emphasize that one \(\delta\) must work everywhere.
+    </figcaption>
+  </figure>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById("viz-uniform");
+    const ctx = canvas.getContext("2d");
+    const sliderEps = document.getElementById("uni-eps");
+    const spanEps = document.getElementById("uni-eps-val");
+    const selectFunc = document.getElementById("uni-func");
+
+    const W = canvas.width, H = canvas.height;
+    const pad = { l: 50, r: 20, t: 20, b: 40 };
+    const plotW = W - pad.l - pad.r;
+    const plotH = H - pad.t - pad.b;
+
+    var funcs = {
+      linear:    { fn: function(x){return x;},            xMin: -0.5, xMax: 3.5, yMin: -0.5, yMax: 4,  domain: [0, 3] },
+      quadratic: { fn: function(x){return x*x;},          xMin: -0.5, xMax: 3.5, yMin: -1,   yMax: 10, domain: [0, 3] },
+      "sin-inv": { fn: function(x){return Math.sin(1/x);}, xMin: -0.1, xMax: 3.2, yMin: -1.5, yMax: 1.5, domain: [0.01, 3] }
+    };
+
+    function toCanvasX(x, cfg) { return pad.l + (x - cfg.xMin) / (cfg.xMax - cfg.xMin) * plotW; }
+    function toCanvasY(y, cfg) { return pad.t + plotH - (y - cfg.yMin) / (cfg.yMax - cfg.yMin) * plotH; }
+
+    function computeUniformDelta(fn, domain, eps, samples) {
+      var minDelta = Infinity;
+      for (var i = 0; i < samples.length; i++) {
+        var x0 = samples[i];
+        var fx0 = fn(x0);
+        var delta = 0.001;
+        while (delta < (domain[1] - domain[0])) {
+          var xlo = Math.max(domain[0], x0 - delta);
+          var xhi = Math.min(domain[1], x0 + delta);
+          var ylo = fn(xlo);
+          var yhi = fn(xhi);
+          if (Math.abs(yhi - fx0) >= eps || Math.abs(ylo - fx0) >= eps) break;
+          delta += 0.001;
+        }
+        delta = Math.max(delta - 0.001, 0.001);
+        if (delta < minDelta) minDelta = delta;
+      }
+      return minDelta;
+    }
+
+    function draw() {
+      var choice = selectFunc.value;
+      var cfg = funcs[choice];
+      var fn = cfg.fn;
+      var epsRaw = Number(sliderEps.value);
+      var eps = 0.05 + (epsRaw / 100) * (cfg.yMax - cfg.yMin) * 0.45;
+      spanEps.textContent = eps.toFixed(2);
+
+      var samplePoints = [];
+      var count = 5;
+      for (var i = 0; i < count; i++) {
+        samplePoints.push(cfg.domain[0] + (i + 0.5) / count * (cfg.domain[1] - cfg.domain[0]));
+      }
+
+      var delta = computeUniformDelta(fn, cfg.domain, eps, samplePoints);
+
+      ctx.clearRect(0, 0, W, H);
+
+      // axes
+      ctx.strokeStyle = "rgba(38, 37, 30, 0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, H - pad.b);
+      ctx.lineTo(W - pad.r, H - pad.b);
+      ctx.stroke();
+
+      // tick labels
+      ctx.fillStyle = "rgba(38, 37, 30, 0.55)";
+      ctx.font = "13px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "center";
+      for (var tx = Math.ceil(cfg.xMin); tx <= cfg.xMax; tx++) {
+        ctx.fillText(tx, toCanvasX(tx, cfg), H - pad.b + 18);
+      }
+      ctx.textAlign = "right";
+      var yStep = (cfg.yMax - cfg.yMin) > 6 ? 2 : 1;
+      for (var ty = Math.ceil(cfg.yMin); ty <= cfg.yMax; ty += yStep) {
+        ctx.fillText(ty, pad.l - 8, toCanvasY(ty, cfg) + 4);
+      }
+
+      // warm palette for sample points
+      var colors = ["#f54e00", "#c08532", "#9fbbe0", "#c0a8dd", "#dfa88f"];
+      for (var i = 0; i < samplePoints.length; i++) {
+        var x0 = samplePoints[i];
+        var fx0 = fn(x0);
+        var c = colors[i % colors.length];
+
+        var eBandTop = toCanvasY(fx0 + eps, cfg);
+        var eBandBot = toCanvasY(fx0 - eps, cfg);
+
+        // delta band (same delta for all) — Grep sage
+        var dLeft = toCanvasX(x0 - delta, cfg);
+        var dRight = toCanvasX(x0 + delta, cfg);
+        ctx.fillStyle = "rgba(159, 201, 162, 0.12)";
+        ctx.fillRect(dLeft, pad.t, dRight - dLeft, plotH);
+
+        // dashed delta lines
+        ctx.strokeStyle = "rgba(159, 201, 162, 0.5)";
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(dLeft, pad.t); ctx.lineTo(dLeft, H - pad.b); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(dRight, pad.t); ctx.lineTo(dRight, H - pad.b); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // point
+        ctx.fillStyle = c;
+        ctx.beginPath();
+        ctx.arc(toCanvasX(x0, cfg), toCanvasY(fx0, cfg), 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // curve
+      ctx.strokeStyle = "#26251e";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      var started = false;
+      for (var px = 0; px <= plotW; px++) {
+        var x = cfg.xMin + (px / plotW) * (cfg.xMax - cfg.xMin);
+        if (x < cfg.domain[0] || x > cfg.domain[1]) { started = false; continue; }
+        var y = fn(x);
+        if (!isFinite(y)) { started = false; continue; }
+        var cx = pad.l + px;
+        var cy = toCanvasY(y, cfg);
+        if (!started) { ctx.moveTo(cx, cy); started = true; } else { ctx.lineTo(cx, cy); }
+      }
+      ctx.stroke();
+
+      // global delta label
+      ctx.fillStyle = "#1f8a65";
+      ctx.font = "bold 13px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("uniform δ = " + delta.toFixed(3), pad.l + 8, pad.t + 18);
+
+      // warning for sin(1/x)
+      if (choice === "sin-inv" && delta < 0.01) {
+        ctx.fillStyle = "#cf2d56";
+        ctx.font = "bold 12px system-ui, Helvetica Neue, sans-serif";
+        ctx.fillText("δ → 0 near x = 0: not uniformly continuous!", pad.l + 8, pad.t + 36);
+      }
+    }
+
+    sliderEps.addEventListener("input", draw);
+    selectFunc.addEventListener("change", draw);
+    draw();
+  })();
+  </script>
+
+  <!-- ====== 6. Worked Examples ====== -->
+  <h2>Examples</h2>
+
+  <div class="example">
+    <span class="block-label">Example 1 — The identity is continuous</span>
+    <p>
+      Let \(f: \mathbb{R} \to \mathbb{R}\) be defined by \(f(x) = x\), where both the domain
+      and image carry the Euclidean metric. Then \(f\) is continuous: for any \(x\) and any
+      \(\varepsilon > 0\), choose \(\delta = \varepsilon\). Then
+      \(|x - y| < \delta \implies |f(x) - f(y)| = |x - y| < \varepsilon\).
+    </p>
+  </div>
+
+  <div class="example">
+    <span class="block-label">Example 2 — Continuity depends on the metric</span>
+    <p>
+      Let \(f: \mathbb{R} \to \mathbb{R}\) again be \(f(x) = x\), but now give the domain the
+      Euclidean metric and the image the <em>trivial</em> (discrete) metric where
+      \(d(a, b) = 0\) if \(a = b\) and \(d(a, b) = 1\) otherwise.
+    </p>
+    <p>
+      Then \(f\) is <strong>not</strong> continuous. Consider the open set
+      \(U = [0, 1) \subset \mathbb{R}\) (which is open in the trivial metric because
+      <em>every</em> subset is open in the discrete topology). Its preimage
+      \(f^{-1}([0,1)) = [0, 1)\) is <em>not</em> open in the Euclidean metric on the domain,
+      since no open ball around \(0\) is contained in \([0,1)\) restricted from the left.
+    </p>
+    <p>
+      This illustrates the worksheet's key note: <strong>continuity depends on the metric</strong>.
+    </p>
+  </div>
+
+  <!-- ====== 7. Exercises ====== -->
+  <h2>Exercises</h2>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 1</span>
+    <p>
+      Prove that \(f(x) = 3x + 1\) is uniformly continuous on all of \(\mathbb{R}\)
+      (with the Euclidean metric).
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        Given \(\varepsilon > 0\), choose \(\delta = \varepsilon / 3\). Then
+        \(|x - y| < \delta \implies |f(x) - f(y)| = 3|x - y| < 3 \cdot \varepsilon/3 = \varepsilon\).
+        Since \(\delta\) does not depend on \(x\), the function is uniformly continuous.
+      </p>
+    </details>
+  </div>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 2</span>
+    <p>
+      Show that \(f(x) = 1/x\) is continuous but <em>not</em> uniformly continuous on \((0, 1)\).
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        <strong>Continuous:</strong> Fix \(x_0 \in (0,1)\) and \(\varepsilon > 0\). We have
+        \(|1/x - 1/x_0| = |x - x_0|/(x \cdot x_0)\). For \(|x - x_0| < x_0/2\), we get
+        \(x > x_0/2\), so \(|1/x - 1/x_0| < 2|x - x_0|/x_0^2\). Choosing
+        \(\delta = \min(x_0/2,\; \varepsilon x_0^2/2)\) works.
+      </p>
+      <p>
+        <strong>Not uniformly continuous:</strong> Take \(x_n = 1/n\) and \(y_n = 1/(n+1)\).
+        Then \(|x_n - y_n| = 1/(n(n+1)) \to 0\), but \(|f(x_n) - f(y_n)| = |n - (n+1)| = 1\).
+        No single \(\delta\) can keep the outputs within \(\varepsilon = 1/2\).
+      </p>
+    </details>
+  </div>
+
+  <!-- ====== 8. References ====== -->
+  <h2>References</h2>
+  <ul>
+    <li>MTH 311, Spring 2026 — Worksheet 8: Continuous mappings (functions).</li>
+  </ul>
+
+</body>
+</html>
