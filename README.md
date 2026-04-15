@@ -6,4 +6,4 @@ A collection of visual, interactive notes on real analysis. Each note is a stand
 
 ### Limits and Continuity
 
-- [Continuous Mappings](notes/continuous-mappings.html)
+- [Continuous Mappings](https://htmlpreview.github.io/?https://github.com/yiniuren/real-analysis/blob/main/notes/continuous-mappings.html)
