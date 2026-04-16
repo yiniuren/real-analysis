@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convergence of Functions — Real Analysis Notes</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.45/dist/katex.min.css">
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+
+  <!-- ====== 1. Title & Metadata ====== -->
+  <h1>Convergence of Functions</h1>
+  <div class="metadata">
+    <span>Topic: Sequences and Series of Functions</span>
+    <span>Prerequisites: <a href="continuous-mappings.html">Continuous Mappings</a></span>
+  </div>
+
+  <!-- ====== 2. Motivation / Intuition ====== -->
+  <h2>Motivation</h2>
+  <p>
+    When we have a sequence of functions \(f_1, f_2, f_3, \ldots\), we naturally ask: does this
+    sequence "approach" some limit function \(f\)? The answer depends on <em>how</em> we measure
+    closeness. Pointwise convergence checks each input \(x\) separately — as long as the numbers
+    \(f_n(x)\) converge to \(f(x)\), we're happy. But this is a weak guarantee: different points
+    can converge at completely different speeds, and nice properties like continuity can be lost
+    in the limit.
+  </p>
+  <p>
+    Uniform convergence is the stronger notion. It demands that the <em>entire graph</em> of
+    \(f_n\) settles into an \(\varepsilon\)-tube around \(f\) at the same rate everywhere.
+    This uniformity is what lets us swap limits with integrals and preserve continuity — the
+    results that make analysis actually work.
+  </p>
+
+  <!-- ====== 3. Formal Definitions ====== -->
+  <h2>Definitions</h2>
+
+  <!-- Definition 1: Pointwise convergence -->
+  <div class="definition">
+    <span class="block-label">Definition 1 — Pointwise Convergence</span>
+    <p>
+      Let \((f_n)_{n=1}^{\infty}\) be a sequence of functions defined on a set \(A \subset \mathbb{R}\).
+      We say \((f_n)\) <strong>converges pointwise</strong> to \(f : A \to \mathbb{R}\) on \(A\) if
+      for every \(\varepsilon > 0\) and every \(x \in A\), there exists \(N = N(\varepsilon, x) \in \mathbb{N}\)
+      such that for all \(n \geq N\),
+    </p>
+    <p>$$|f_n(x) - f(x)| < \varepsilon.$$</p>
+  </div>
+
+  <div class="intuition">
+    <span class="block-label">Intuition</span>
+    <p>
+      Fix any single point \(x\). The sequence of numbers \(f_1(x), f_2(x), f_3(x), \ldots\)
+      converges to \(f(x)\). That's it — pointwise convergence is just ordinary convergence of
+      real numbers, repeated separately for each \(x\). The crucial detail is that the "how long
+      you have to wait" number \(N\) is allowed to depend on which \(x\) you're looking at.
+      Near a trouble spot, \(N\) might be enormous; at a calm point, \(N\) might be small.
+    </p>
+  </div>
+
+  <!-- Definition 2: Uniform convergence -->
+  <div class="definition">
+    <span class="block-label">Definition 2 — Uniform Convergence</span>
+    <p>
+      The sequence \((f_n)\) <strong>converges uniformly</strong> to \(f : A \to \mathbb{R}\)
+      on \(A\) if for every \(\varepsilon > 0\), there exists \(N = N(\varepsilon) \in \mathbb{N}\)
+      such that for all \(n \geq N\) and <em>all</em> \(x \in A\),
+    </p>
+    <p>$$|f_n(x) - f(x)| < \varepsilon.$$</p>
+    <p>
+      The key difference from pointwise convergence: \(N\) depends only on \(\varepsilon\),
+      not on \(x\).
+    </p>
+  </div>
+
+  <div class="intuition">
+    <span class="block-label">Intuition</span>
+    <p>
+      Draw the graph of \(f\) and inflate it into a tube of height \(2\varepsilon\). Uniform
+      convergence means that from some index \(N\) onward, the <em>entire</em> graph of \(f_n\)
+      fits inside that tube — no part of the curve pokes out anywhere. One single \(N\) tames
+      every point simultaneously. Think of it as the "speed of convergence" being bounded across
+      the whole domain: no point is allowed to converge arbitrarily slowly.
+    </p>
+  </div>
+
+  <!-- ====== 4. Visualizations ====== -->
+  <h2>Visualizations</h2>
+
+  <!-- Visualization 1: Uniform vs pointwise -->
+  <h3>Uniform vs Pointwise Convergence</h3>
+  <figure>
+    <canvas id="viz-compare" width="640" height="400"></canvas>
+    <div class="controls">
+      <label>\(n\): <input type="range" id="cmp-n" min="1" max="60" value="1"> <span id="cmp-n-val"></span></label>
+      <label>\(\varepsilon\): <input type="range" id="cmp-eps" min="5" max="80" value="30"> <span id="cmp-eps-val"></span></label>
+    </div>
+    <figcaption>
+      <strong>Left:</strong> \(f_n(x) = x + 1/n\) converges uniformly to \(f(x) = x\). The entire
+      curve enters the \(\varepsilon\)-tube at the same \(N\).
+      <strong>Right:</strong> \(f_n(x) = x + x^2/n\) converges pointwise but not uniformly — the
+      curve escapes the tube at large \(x\) no matter how large \(n\) is.
+    </figcaption>
+  </figure>
+
+  <script>
+  (function () {
+    var canvas = document.getElementById("viz-compare");
+    var ctx = canvas.getContext("2d");
+    var sliderN = document.getElementById("cmp-n");
+    var sliderEps = document.getElementById("cmp-eps");
+    var spanN = document.getElementById("cmp-n-val");
+    var spanEps = document.getElementById("cmp-eps-val");
+
+    var W = canvas.width, H = canvas.height;
+    var midX = W / 2;
+
+    function drawPanel(ox, ow, n, eps, fn, f, label, xMin, xMax, yMin, yMax, isUniform) {
+      var pad = { l: 40, r: 10, t: 25, b: 30 };
+      var pw = ow - pad.l - pad.r;
+      var ph = H - pad.t - pad.b;
+
+      function toX(v) { return ox + pad.l + (v - xMin) / (xMax - xMin) * pw; }
+      function toY(v) { return pad.t + ph - (v - yMin) / (yMax - yMin) * ph; }
+
+      // title
+      ctx.fillStyle = "#26251e";
+      ctx.font = "bold 13px system-ui, Helvetica Neue, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(label, ox + pad.l, 16);
+
+      // axes
+      ctx.strokeStyle = "rgba(38,37,30,0.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(ox + pad.l, pad.t);
+      ctx.lineTo(ox + pad.l, H - pad.b);
+      ctx.lineTo(ox + pad.l + pw, H - pad.b);
+      ctx.stroke();
+
+      // ticks
+      ctx.fillStyle = "rgba(38,37,30,0.5)";
+      ctx.font = "11px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      var xStep = (xMax - xMin) <= 4 ? 1 : 2;
+      for (var tx = Math.ceil(xMin); tx <= xMax; tx += xStep) {
+        ctx.fillText(tx, toX(tx), H - pad.b + 14);
+      }
+      ctx.textAlign = "right";
+      var yStep = (yMax - yMin) <= 5 ? 1 : 2;
+      for (var ty = Math.ceil(yMin); ty <= yMax; ty += yStep) {
+        if (ty === yMin) continue;
+        ctx.fillText(ty, ox + pad.l - 5, toY(ty) + 4);
+      }
+
+      // epsilon tube around f
+      ctx.fillStyle = "rgba(159, 187, 224, 0.18)";
+      ctx.beginPath();
+      for (var px = 0; px <= pw; px++) {
+        var x = xMin + (px / pw) * (xMax - xMin);
+        var yTop = f(x) + eps;
+        if (px === 0) ctx.moveTo(toX(x), toY(yTop));
+        else ctx.lineTo(toX(x), toY(yTop));
+      }
+      for (var px = pw; px >= 0; px--) {
+        var x = xMin + (px / pw) * (xMax - xMin);
+        var yBot = f(x) - eps;
+        ctx.lineTo(toX(x), toY(yBot));
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // tube edges
+      ctx.strokeStyle = "rgba(159, 187, 224, 0.5)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      for (var px = 0; px <= pw; px++) {
+        var x = xMin + (px / pw) * (xMax - xMin);
+        if (px === 0) ctx.moveTo(toX(x), toY(f(x) + eps));
+        else ctx.lineTo(toX(x), toY(f(x) + eps));
+      }
+      ctx.stroke();
+      ctx.beginPath();
+      for (var px = 0; px <= pw; px++) {
+        var x = xMin + (px / pw) * (xMax - xMin);
+        if (px === 0) ctx.moveTo(toX(x), toY(f(x) - eps));
+        else ctx.lineTo(toX(x), toY(f(x) - eps));
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // limit function f
+      ctx.strokeStyle = "rgba(38,37,30,0.4)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (var px = 0; px <= pw; px++) {
+        var x = xMin + (px / pw) * (xMax - xMin);
+        var cy = toY(f(x));
+        if (px === 0) ctx.moveTo(toX(x), cy); else ctx.lineTo(toX(x), cy);
+      }
+      ctx.stroke();
+
+      // fn curve
+      ctx.strokeStyle = "#f54e00";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      var inside = true;
+      for (var px = 0; px <= pw; px++) {
+        var x = xMin + (px / pw) * (xMax - xMin);
+        var y = fn(x, n);
+        if (Math.abs(y - f(x)) > eps) inside = false;
+        var cy = toY(y);
+        if (cy < pad.t - 5 || cy > H - pad.b + 5) {
+          ctx.moveTo(toX(x), Math.max(pad.t, Math.min(H - pad.b, cy)));
+          continue;
+        }
+        if (px === 0) ctx.moveTo(toX(x), cy); else ctx.lineTo(toX(x), cy);
+      }
+      ctx.stroke();
+
+      // verdict
+      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      if (isUniform) {
+        var sup = 1.0 / n;
+        if (sup < eps) {
+          ctx.fillStyle = "#1f8a65";
+          ctx.fillText("sup|fn - f| = 1/" + n + " < ε  ✓", ox + pad.l + 4, pad.t + 14);
+        } else {
+          ctx.fillStyle = "#cf2d56";
+          ctx.fillText("sup|fn - f| = 1/" + n + " ≥ ε", ox + pad.l + 4, pad.t + 14);
+        }
+      } else {
+        ctx.fillStyle = "#cf2d56";
+        ctx.fillText("sup|fn - f| = sup(x²/" + n + ") = ∞", ox + pad.l + 4, pad.t + 14);
+      }
+    }
+
+    function draw() {
+      var n = Number(sliderN.value);
+      var epsRaw = Number(sliderEps.value);
+      var eps = 0.1 + (epsRaw / 100) * 2.5;
+      spanN.textContent = n;
+      spanEps.textContent = eps.toFixed(2);
+
+      ctx.clearRect(0, 0, W, H);
+
+      // divider
+      ctx.strokeStyle = "rgba(38,37,30,0.1)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(midX, 0);
+      ctx.lineTo(midX, H);
+      ctx.stroke();
+
+      var fLimit = function (x) { return x; };
+      var fnUniform = function (x, n) { return x + 1.0 / n; };
+      var fnPointwise = function (x, n) { return x + (x * x) / n; };
+
+      drawPanel(0, midX, n, eps, fnUniform, fLimit,
+        "f_n = x + 1/n  (uniform)", 0, 4, -0.5, 5, true);
+      drawPanel(midX, midX, n, eps, fnPointwise, fLimit,
+        "f_n = x + x²/n  (pointwise only)", 0, 4, -0.5, 5, false);
+    }
+
+    sliderN.addEventListener("input", draw);
+    sliderEps.addEventListener("input", draw);
+    draw();
+  })();
+  </script>
+
+  <!-- Visualization 2: x^n on [0,1] -->
+  <h3>The Classic: \(f_n(x) = x^n\) on \([0, 1]\)</h3>
+  <figure>
+    <canvas id="viz-xn" width="640" height="400"></canvas>
+    <div class="controls">
+      <label>\(n\): <input type="range" id="xn-n" min="1" max="80" value="1"> <span id="xn-n-val"></span></label>
+      <label>\(\varepsilon\): <input type="range" id="xn-eps" min="5" max="80" value="30"> <span id="xn-eps-val"></span></label>
+      <label>
+        Domain:
+        <select id="xn-domain">
+          <option value="full" selected>[0, 1]</option>
+          <option value="restricted">[0, 0.9]</option>
+        </select>
+      </label>
+    </div>
+    <figcaption>
+      On \([0,1]\), \(x^n \to f\) where \(f(x) = 0\) for \(x &lt; 1\) and \(f(1) = 1\).
+      The limit is discontinuous, so convergence cannot be uniform (Theorem 3).
+      Restrict to \([0, 0.9]\) and the curve fits the tube — uniform convergence succeeds on the smaller domain.
+    </figcaption>
+  </figure>
+
+  <script>
+  (function () {
+    var canvas = document.getElementById("viz-xn");
+    var ctx = canvas.getContext("2d");
+    var sliderN = document.getElementById("xn-n");
+    var sliderEps = document.getElementById("xn-eps");
+    var spanN = document.getElementById("xn-n-val");
+    var spanEps = document.getElementById("xn-eps-val");
+    var selectDomain = document.getElementById("xn-domain");
+
+    var W = canvas.width, H = canvas.height;
+    var pad = { l: 50, r: 20, t: 30, b: 40 };
+    var pw = W - pad.l - pad.r;
+    var ph = H - pad.t - pad.b;
+
+    var xMin = -0.05, xMax = 1.1;
+    var yMin = -0.15, yMax = 1.25;
+
+    function toX(v) { return pad.l + (v - xMin) / (xMax - xMin) * pw; }
+    function toY(v) { return pad.t + ph - (v - yMin) / (yMax - yMin) * ph; }
+
+    function draw() {
+      var n = Number(sliderN.value);
+      var epsRaw = Number(sliderEps.value);
+      var eps = 0.02 + (epsRaw / 100) * 0.6;
+      var domain = selectDomain.value;
+      var domRight = domain === "restricted" ? 0.9 : 1.0;
+
+      spanN.textContent = n;
+      spanEps.textContent = eps.toFixed(3);
+
+      ctx.clearRect(0, 0, W, H);
+
+      // axes
+      ctx.strokeStyle = "rgba(38,37,30,0.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t);
+      ctx.lineTo(pad.l, H - pad.b);
+      ctx.lineTo(W - pad.r, H - pad.b);
+      ctx.stroke();
+
+      // ticks
+      ctx.fillStyle = "rgba(38,37,30,0.5)";
+      ctx.font = "12px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      for (var tx = 0; tx <= 1; tx += 0.25) {
+        ctx.fillText(tx.toFixed(2), toX(tx), H - pad.b + 16);
+      }
+      ctx.textAlign = "right";
+      for (var ty = 0; ty <= 1; ty += 0.25) {
+        ctx.fillText(ty.toFixed(2), pad.l - 6, toY(ty) + 4);
+      }
+
+      // limit function
+      // f(x) = 0 for x in [0,domRight) if domRight < 1, f(x) = 0 for x in [0,1), f(1) = 1
+      var fLimit;
+      if (domain === "restricted") {
+        fLimit = function (x) { return 0; };
+      } else {
+        fLimit = function (x) { return x >= 1 ? 1 : 0; };
+      }
+
+      // domain shading
+      ctx.fillStyle = "rgba(159, 201, 162, 0.1)";
+      ctx.fillRect(toX(0), pad.t, toX(domRight) - toX(0), ph);
+      ctx.strokeStyle = "rgba(159, 201, 162, 0.4)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(toX(domRight), pad.t);
+      ctx.lineTo(toX(domRight), H - pad.b);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // epsilon tube around limit
+      ctx.fillStyle = "rgba(159, 187, 224, 0.18)";
+      ctx.fillRect(toX(0), toY(0 + eps), toX(domRight) - toX(0), toY(0 - eps) - toY(0 + eps));
+      ctx.strokeStyle = "rgba(159, 187, 224, 0.5)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(eps));
+      ctx.lineTo(toX(domRight), toY(eps));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(-eps));
+      ctx.lineTo(toX(domRight), toY(-eps));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (domain === "full") {
+        // tube around f(1) = 1
+        ctx.fillStyle = "rgba(159, 187, 224, 0.18)";
+        var dotR = 8;
+        ctx.fillRect(toX(1) - dotR, toY(1 + eps), dotR * 2, toY(1 - eps) - toY(1 + eps));
+      }
+
+      // limit function drawing
+      ctx.strokeStyle = "rgba(38,37,30,0.4)";
+      ctx.lineWidth = 1.5;
+      if (domain === "full") {
+        ctx.beginPath();
+        ctx.moveTo(toX(0), toY(0));
+        ctx.lineTo(toX(0.999), toY(0));
+        ctx.stroke();
+        ctx.fillStyle = "#26251e";
+        ctx.beginPath();
+        ctx.arc(toX(1), toY(1), 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(38,37,30,0.4)";
+        ctx.beginPath();
+        ctx.arc(toX(1), toY(0), 4, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(toX(0), toY(0));
+        ctx.lineTo(toX(0.9), toY(0));
+        ctx.stroke();
+      }
+
+      // ghost previous curves
+      for (var k = 1; k < n; k += Math.max(1, Math.floor(n / 6))) {
+        if (k === n) continue;
+        ctx.strokeStyle = "rgba(38,37,30,0.08)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (var px = 0; px <= pw; px++) {
+          var x = xMin + (px / pw) * (xMax - xMin);
+          if (x < 0 || x > domRight + 0.01) continue;
+          var y = Math.pow(x, k);
+          var cy = toY(y);
+          if (px === 0 || x <= 0) ctx.moveTo(toX(x), cy);
+          else ctx.lineTo(toX(x), cy);
+        }
+        ctx.stroke();
+      }
+
+      // fn(x) = x^n
+      ctx.strokeStyle = "#f54e00";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      var outside = false;
+      for (var px = 0; px <= pw; px++) {
+        var x = xMin + (px / pw) * (xMax - xMin);
+        if (x < 0 || x > domRight + 0.01) continue;
+        var y = Math.pow(x, n);
+        if (domain === "restricted" && y > eps) outside = true;
+        if (domain === "full" && x < 1 && y > eps) outside = true;
+        var cy = toY(y);
+        if (x <= 0) ctx.moveTo(toX(x), cy);
+        else ctx.lineTo(toX(x), cy);
+      }
+      ctx.stroke();
+
+      // labels
+      ctx.fillStyle = "#26251e";
+      ctx.font = "italic 14px Palatino Linotype, Georgia, serif";
+      ctx.textAlign = "left";
+      ctx.fillText("f_n(x) = x^" + n, pad.l + 8, pad.t + 18);
+
+      ctx.fillStyle = "rgba(90, 138, 181, 0.9)";
+      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.fillText("ε = " + eps.toFixed(3), W - pad.r - 90, pad.t + 16);
+
+      // verdict
+      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      if (domain === "restricted") {
+        var sup = Math.pow(0.9, n);
+        if (sup < eps) {
+          ctx.fillStyle = "#1f8a65";
+          ctx.fillText("sup|x^" + n + "| on [0,0.9] = " + sup.toFixed(4) + " < ε  ✓  uniform", pad.l + 8, H - pad.b - 8);
+        } else {
+          ctx.fillStyle = "#cf2d56";
+          ctx.fillText("sup|x^" + n + "| on [0,0.9] = " + sup.toFixed(4) + " ≥ ε", pad.l + 8, H - pad.b - 8);
+        }
+      } else {
+        ctx.fillStyle = "#cf2d56";
+        ctx.fillText("Limit is discontinuous → convergence cannot be uniform (Thm 3)", pad.l + 8, H - pad.b - 8);
+      }
+    }
+
+    sliderN.addEventListener("input", draw);
+    sliderEps.addEventListener("input", draw);
+    selectDomain.addEventListener("change", draw);
+    draw();
+  })();
+  </script>
+
+  <!-- ====== 5. Key Theorems & Proofs ====== -->
+  <h2>Theorems</h2>
+
+  <!-- Proposition 2 -->
+  <div class="theorem">
+    <span class="block-label">Proposition 1 — Sup-Norm Characterization</span>
+    <p>
+      \((f_n)\) converges to \(f\) uniformly on \(A\) if and only if
+    </p>
+    <p>$$\sup_{x \in A} |f_n(x) - f(x)| \to 0 \quad \text{as } n \to \infty.$$</p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: show the sup-norm condition is equivalent to the definition of uniform convergence.</p>
+    <ul>
+      <li>
+        (⇒) Suppose \(f_n \to f\) uniformly. Given \(\varepsilon > 0\), there exists \(N\) such that
+        \(|f_n(x) - f(x)| < \varepsilon\) for all \(n \geq N\) and all \(x \in A\).
+        <br><em>— Taking the supremum over all \(x\), we get \(\sup_{x \in A} |f_n(x) - f(x)| \leq \varepsilon\) for \(n \geq N\).</em>
+      </li>
+      <li>
+        (⇐) Suppose \(\sup_{x \in A} |f_n(x) - f(x)| \to 0\). Given \(\varepsilon > 0\),
+        choose \(N\) so that \(\sup_{x} |f_n(x) - f(x)| < \varepsilon\) for all \(n \geq N\).
+        <br><em>— Since \(|f_n(x) - f(x)| \leq \sup_{x}|f_n - f|\) for every \(x\), we get
+        \(|f_n(x) - f(x)| < \varepsilon\) for all \(x \in A\) and all \(n \geq N\). This is exactly uniform convergence.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Theorem 3 -->
+  <div class="theorem">
+    <span class="block-label">Theorem 2 — Uniform Limit of Continuous Functions is Continuous</span>
+    <p>
+      Assume \((f_n)\) converges to \(f\) uniformly on \(A\), and each \(f_n\) is continuous
+      at \(x_0 \in A\). Then \(f\) is also continuous at \(x_0\).
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof</span>
+    <p class="proof-goal">Goal: show \(|f(x) - f(x_0)| < \varepsilon\) for \(x\) near \(x_0\), using the triangle inequality to route through \(f_n\).</p>
+    <ul>
+      <li>
+        Let \(\varepsilon > 0\). By uniform convergence, choose \(N\) so that
+        \(|f_n(x) - f(x)| < \varepsilon / 3\) for all \(n \geq N\) and all \(x \in A\).
+        <br><em>— This pins \(f_N\) within \(\varepsilon/3\) of \(f\) everywhere.</em>
+      </li>
+      <li>
+        Since \(f_N\) is continuous at \(x_0\), choose \(\delta > 0\) so that
+        \(|x - x_0| < \delta \implies |f_N(x) - f_N(x_0)| < \varepsilon / 3\).
+        <br><em>— Continuity of the single function \(f_N\) gives us control in the middle.</em>
+      </li>
+      <li>
+        For \(|x - x_0| < \delta\), apply the triangle inequality:
+        $$|f(x) - f(x_0)| \leq \underbrace{|f(x) - f_N(x)|}_{< \varepsilon/3} + \underbrace{|f_N(x) - f_N(x_0)|}_{< \varepsilon/3} + \underbrace{|f_N(x_0) - f(x_0)|}_{< \varepsilon/3} < \varepsilon.$$
+        <br><em>— The three-part split: uniform convergence handles the first and third terms, continuity of \(f_N\) handles the middle.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Corollary 4 -->
+  <div class="theorem">
+    <span class="block-label">Corollary 3</span>
+    <p>
+      Let \(f_n \in C[0, 1]\) (continuous on \([0, 1]\)) converge to \(f\) pointwise on \([0, 1]\).
+      If the convergence is in fact uniform, then \(f \in C[0, 1]\).
+    </p>
+    <p>
+      <em>Contrapositive:</em> if the pointwise limit \(f\) is discontinuous, then the convergence
+      is <strong>not</strong> uniform. (This is why \(x^n \to f\) on \([0, 1]\) cannot be uniform —
+      the limit is discontinuous at \(x = 1\).)
+    </p>
+  </div>
+
+  <!-- Proposition 5 -->
+  <div class="theorem">
+    <span class="block-label">Theorem 4 — Interchange of Limit and Integral</span>
+    <p>
+      Assume \(f_n\) are Riemann integrable on \([0, 1]\) and \(f_n \to f\) uniformly. Then
+    </p>
+    <p>
+      $$\lim_{n \to \infty} \int_0^1 f_n(x)\, dx = \int_0^1 f(x)\, dx.$$
+    </p>
+    <p>
+      In other words, uniform convergence lets us swap the limit and the integral.
+    </p>
+  </div>
+
+  <div class="proof">
+    <span class="block-label">Proof sketch</span>
+    <p class="proof-goal">Goal: bound \(\left|\int_0^1 f_n - \int_0^1 f\right|\) using the sup-norm.</p>
+    <ul>
+      <li>
+        We have \(\left|\int_0^1 f_n(x)\,dx - \int_0^1 f(x)\,dx\right| = \left|\int_0^1 (f_n(x) - f(x))\,dx\right| \leq \int_0^1 |f_n(x) - f(x)|\,dx\).
+        <br><em>— Linearity of the integral and the triangle inequality.</em>
+      </li>
+      <li>
+        Since \(|f_n(x) - f(x)| \leq \sup_{x} |f_n - f|\) for all \(x\), we get
+        \(\int_0^1 |f_n - f|\,dx \leq \sup_x |f_n(x) - f(x)| \cdot 1\).
+        <br><em>— Replace the integrand by its uniform bound and integrate over \([0, 1]\).</em>
+      </li>
+      <li>
+        By Proposition 1, \(\sup |f_n - f| \to 0\), so the integral difference tends to 0.
+        <br><em>— The sup-norm characterization closes the argument.</em>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Remark 6 -->
+  <div class="intuition">
+    <span class="block-label">Important Warnings</span>
+    <p>
+      <strong>(1)</strong> Pointwise convergence does <em>not</em> imply that integrals converge.
+      The pointwise limit can redistribute mass in ways that change the integral.
+    </p>
+    <p>
+      <strong>(2)</strong> Even uniform convergence does <em>not</em> guarantee that derivatives
+      converge: \(f_n \to f\) uniformly does not imply \(f_n' \to f'\). Differentiation is a
+      much more delicate operation than integration.
+    </p>
+  </div>
+
+  <!-- ====== 6. Examples ====== -->
+  <h2>Examples</h2>
+
+  <div class="example">
+    <span class="block-label">Example 1 — Uniform convergence: \(f_n(x) = x + 1/n\)</span>
+    <p>
+      On all of \(\mathbb{R}\), \(f_n(x) = x + 1/n\) converges to \(f(x) = x\).
+      The sup-norm is \(\sup_x |f_n(x) - f(x)| = \sup_x |1/n| = 1/n \to 0\).
+      Since the supremum does not depend on \(x\) at all, convergence is uniform.
+    </p>
+  </div>
+
+  <div class="example">
+    <span class="block-label">Example 2 — Pointwise but not uniform: \(f_n(x) = x + x^2/n\)</span>
+    <p>
+      On \(\mathbb{R}\), \(f_n(x) = x + x^2/n\) converges to \(f(x) = x\) pointwise:
+      for each fixed \(x\), \(|f_n(x) - f(x)| = x^2/n \to 0\). But
+      \(\sup_{x \in \mathbb{R}} x^2/n = \infty\) for every \(n\), so the convergence is not uniform.
+      At large \(x\), the error \(x^2/n\) can be made arbitrarily large.
+    </p>
+  </div>
+
+  <div class="example">
+    <span class="block-label">Example 3 — The classic: \(f_n(x) = x^n\) on \([0, 1]\)</span>
+    <p>
+      For \(x \in [0, 1)\), \(x^n \to 0\). At \(x = 1\), \(1^n = 1\) for all \(n\).
+      So the pointwise limit is
+    </p>
+    <p>
+      $$f(x) = \begin{cases} 0, & x \in [0, 1) \\ 1, & x = 1. \end{cases}$$
+    </p>
+    <p>
+      This limit is discontinuous at \(x = 1\). Since each \(f_n(x) = x^n\) is continuous and
+      the limit is not, Theorem 2 (contrapositive) tells us the convergence is <strong>not uniform</strong>
+      on \([0, 1]\).
+    </p>
+    <p>
+      However, on the restricted domain \([0, 0.9]\), \(\sup_{x \in [0, 0.9]} x^n = 0.9^n \to 0\),
+      so the convergence <strong>is</strong> uniform on \([0, 0.9]\). The trouble is isolated near \(x = 1\).
+    </p>
+  </div>
+
+  <!-- ====== 7. Exercises ====== -->
+  <h2>Exercises</h2>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 1</span>
+    <p>
+      Prove that if \(f_n \to f\) uniformly on \(A\), then \(f_n \to f\) pointwise on \(A\).
+      Give an example showing the converse fails.
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        Uniform convergence means: for every \(\varepsilon > 0\), there exists \(N\) such that
+        \(|f_n(x) - f(x)| < \varepsilon\) for all \(n \geq N\) and all \(x\). In particular,
+        for any fixed \(x\), this \(N\) works, so \(f_n(x) \to f(x)\). The converse fails:
+        \(f_n(x) = x^n\) on \([0, 1]\) converges pointwise but not uniformly (Example 3).
+      </p>
+    </details>
+  </div>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 2</span>
+    <p>
+      Let \(f_n(x) = \frac{nx}{1 + nx}\) on \([0, 1]\). Find the pointwise limit.
+      Is the convergence uniform?
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        For \(x = 0\): \(f_n(0) = 0\) for all \(n\), so \(f(0) = 0\).
+        For \(x > 0\): \(f_n(x) = \frac{nx}{1 + nx} = \frac{1}{1/(nx) + 1} \to 1\) as \(n \to \infty\).
+        So \(f(x) = 0\) if \(x = 0\), and \(f(x) = 1\) if \(x > 0\). This limit is discontinuous
+        at 0, but each \(f_n\) is continuous. By the contrapositive of Theorem 2, the convergence
+        is not uniform on \([0, 1]\).
+      </p>
+    </details>
+  </div>
+
+  <div class="exercise">
+    <span class="block-label">Exercise 3</span>
+    <p>
+      Show that \(f_n(x) = x/n\) converges uniformly to \(0\) on \([0, 1]\) but not on \([0, \infty)\).
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        On \([0, 1]\): \(\sup_{x \in [0,1]} |x/n| = 1/n \to 0\). Uniform by Proposition 1.
+        On \([0, \infty)\): \(\sup_{x \geq 0} |x/n| = \infty\) for every \(n\).
+        The sup-norm never tends to 0, so convergence is not uniform.
+      </p>
+    </details>
+  </div>
+
+  <script>
+    (function () {
+      var cdnBase = "https://cdn.jsdelivr.net/npm/katex@0.16.45/dist/";
+      function loadScript(src, cb) {
+        var s = document.createElement("script");
+        s.src = src;
+        s.onload = cb;
+        document.head.appendChild(s);
+      }
+      loadScript(cdnBase + "katex.min.js", function () {
+        loadScript(cdnBase + "contrib/auto-render.min.js", function () {
+          renderMathInElement(document.body, { throwOnError: false });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

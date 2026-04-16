@@ -11,3 +11,7 @@ A collection of visual, interactive notes on real analysis. Each note is a stand
 ### Topology of R
 
 - [Compactness](https://htmlpreview.github.io/?https://github.com/yiniuren/real-analysis/blob/main/notes/compactness.html)
+
+### Sequences and Series of Functions
+
+- [Convergence of Functions](https://htmlpreview.github.io/?https://github.com/yiniuren/real-analysis/blob/main/notes/function-convergence.html)
